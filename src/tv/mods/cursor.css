@@ -1,0 +1,9 @@
+/*
+ * Site change: hide the pointer while idle.
+ * The class is toggled by run.ts after 2.5 s without mouse movement. See
+ * docs/site-changes.md.
+ */
+html.couch-hide-cursor,
+html.couch-hide-cursor * {
+  cursor: none !important;
+}

@@ -1,0 +1,36 @@
+name: CI
+
+# Every push and pull request: typecheck, unit tests and a production build.
+# Releases have their own manual workflow; this one never publishes.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Check the installer
+        run: bash -n packaging/install.sh
+
+      - run: npm ci
+
+      - run: npm run verify
+
+      - run: npm run build

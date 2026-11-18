@@ -1,0 +1,40 @@
+/*
+ * Site change: edge-to-edge watch page.
+ * The player owns the viewport and the OSD overlays its bottom edge. The
+ * site's max-heights are deliberate desktop limits and must be overridden.
+ * See docs/site-changes.md.
+ */
+html.couch-watch,
+html.couch-watch body {
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+html.couch-watch #watch-player {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+}
+
+html.couch-watch #watch-player .embed {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  padding: 0 !important;
+}
+
+html.couch-watch #watch-player iframe {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}

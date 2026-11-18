@@ -1,0 +1,8 @@
+/*
+ * Site change: hide the catalog hero carousel.
+ * It autoplays, eats a full screen, and duplicates CTAs that already exist in
+ * the rows. Only catalog pages are affected. See docs/site-changes.md.
+ */
+html.couch-catalog .carousel {
+  display: none !important;
+}

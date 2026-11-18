@@ -1,0 +1,19 @@
+/*
+ * Site change: focus ring.
+ * Outline and box-shadow do not affect layout, so the site renders exactly as
+ * it does in a browser apart from the ring. See docs/site-changes.md.
+ */
+.couch-focus {
+  outline: 4px solid #feea3b !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/*
+ * The fixed TV ring already wraps the whole card. Outlining the artwork link
+ * as well reads as a second focus layer, so cards get the ring only.
+ */
+.browse-item-card a.couch-focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

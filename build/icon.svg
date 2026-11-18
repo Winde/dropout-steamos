@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Iconoir "sofa" (MIT, Copyright (c) 2021 Luca Burgio) on a square
+       canvas: recoloured, rescaled and padded. Licence text: licenses/iconoir.txt -->
+  <title>Drop-In</title>
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="#121316"/>
+  <g transform="translate(68.85 68.85) scale(15.6)" fill="none" stroke="#FEEA3B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 16L2 19"/>
+    <path d="M4 9V7C4 5.89543 4.89543 5 6 5L18 5C19.1046 5 20 5.89543 20 7V9"/>
+    <path d="M20 9C18.8954 9 18 9.89543 18 11V13H6V11C6 9.89543 5.10457 9 4 9C2.89543 9 2 9.89543 2 11V17H22V11C22 9.89543 21.1046 9 20 9Z"/>
+    <path d="M22 16L22 19"/>
+  </g>
+</svg>

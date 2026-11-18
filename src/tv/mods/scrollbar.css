@@ -1,0 +1,10 @@
+/*
+ * Site change: never show a scrollbar on a TV, but keep scrolling.
+ * See docs/site-changes.md.
+ */
+html {
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}

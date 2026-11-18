@@ -1,0 +1,31 @@
+{
+  "name": "dropout-steamos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unofficial, controller-first Drop-In client for Dropout on Linux and SteamOS",
+  "desktopName": "drop-in.desktop",
+  "author": "Winde",
+  "license": "MIT",
+  "main": "dist/main.cjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron . --devtools",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "npm run typecheck && npm test",
+    "build:linux": "npm run build && electron-builder --linux"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "electron": "^45.3.4",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "jsdom": "^31.0.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}
