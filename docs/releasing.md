@@ -129,7 +129,16 @@ repository, and no CI job that publishes anywhere else.
 executable, add it to Steam, then launch it from Game Mode. The AppImage lives
 in `/home`, so it survives system updates.
 
-Drop-In has no in-app updater. To update, re-run the installer: it replaces
+Drop-In updates itself from GitHub Releases. The header's **Drop-In vX.Y.Z /
+Check for updates** stamp, or **Y** outside the player, compares the running
+`app.getVersion()` with the latest stable release; **Update now** downloads
+`Drop-In-<version>-x86_64.AppImage`, verifies it against that release's
+`SHA256SUMS.txt`, renames it over the running AppImage, and relaunches. This is
+why every release must keep that asset name and publish `SHA256SUMS.txt`.
+Builds from before the updater have to be replaced once with the installer.
+
+The installer is the fallback: re-run it for a first install, a machine without
+write access to the AppImage, or to repair one. It replaces
 `~/Applications/Drop-In.AppImage` in place, so the Steam entry and its appid stay
 valid, and it leaves the shortcut's name, controller layout and any artwork you
 changed in Steam alone. Artwork it installed itself is refreshed on update. Use

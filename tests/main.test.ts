@@ -74,6 +74,8 @@ const mocks = vi.hoisted(() => {
   const app = {
     commandLine: { appendSwitch: vi.fn() },
     setName: vi.fn(),
+    getVersion: vi.fn(() => "0.1.0"),
+    relaunch: vi.fn(),
     requestSingleInstanceLock: vi.fn(() => true),
     quit: vi.fn(),
     on: vi.fn((event: string, handler: (...args: any[]) => void) => {
@@ -86,6 +88,9 @@ const mocks = vi.hoisted(() => {
     on: vi.fn((event: string, handler: (...args: any[]) => void) => {
       ipcHandlers.set(event, handler);
     }),
+    handle: vi.fn((event: string, handler: (...args: any[]) => void) => {
+      ipcHandlers.set(event, handler);
+    }),
   };
 
   const session = {
@@ -96,6 +101,7 @@ const mocks = vi.hoisted(() => {
   };
 
   const shell = { openExternal: vi.fn() };
+  const net = { fetch: vi.fn() };
 
   return {
     app,
@@ -103,6 +109,7 @@ const mocks = vi.hoisted(() => {
     BrowserWindow: FakeWindow,
     ipcHandlers,
     ipcMain,
+    net,
     pinEnglish: vi.fn(),
     session,
     shell,
@@ -114,6 +121,7 @@ vi.mock("electron", () => ({
   app: mocks.app,
   BrowserWindow: mocks.BrowserWindow,
   ipcMain: mocks.ipcMain,
+  net: mocks.net,
   session: mocks.session,
   shell: mocks.shell,
 }));
@@ -151,6 +159,12 @@ function contentHandler(event: string): (...args: any[]) => void {
 function appHandler(event: string): (...args: any[]) => void {
   const handler = mocks.appHandlers.get(event);
   if (!handler) throw new Error(`no app handler for ${event}`);
+  return handler;
+}
+
+function ipcHandler(event: string): (...args: any[]) => any {
+  const handler = mocks.ipcHandlers.get(event);
+  if (!handler) throw new Error(`no ipc handler for ${event}`);
   return handler;
 }
 
@@ -312,6 +326,91 @@ describe("startup", () => {
 
     quit?.();
     expect(mocks.app.quit).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("updates", () => {
+  function trusted(): { sender: unknown } {
+    return { sender: win().webContents };
+  }
+
+  function release(version: string): unknown {
+    const base = `https://github.com/Winde/dropout-steamos/releases/download/v${version}`;
+    return {
+      tag_name: `v${version}`,
+      assets: [
+        {
+          name: `Drop-In-${version}-x86_64.AppImage`,
+          browser_download_url: `${base}/Drop-In-${version}-x86_64.AppImage`,
+        },
+        {
+          name: "SHA256SUMS.txt",
+          browser_download_url: `${base}/SHA256SUMS.txt`,
+        },
+      ],
+    };
+  }
+
+  it("reports the running version to the TV layer", async () => {
+    await loadMain();
+
+    expect(ipcHandler("couch:version")(trusted())).toBe("0.1.0");
+  });
+
+  it("refuses update requests from another sender", async () => {
+    await loadMain();
+    const stranger = { sender: {} };
+
+    expect(() => ipcHandler("couch:version")(stranger)).toThrow(
+      "Untrusted sender",
+    );
+    expect(() => ipcHandler("couch:update-check")(stranger)).toThrow(
+      "Untrusted sender",
+    );
+    expect(() => ipcHandler("couch:update-notes")(stranger)).toThrow(
+      "Untrusted sender",
+    );
+    await expect(
+      ipcHandler("couch:update-install")(stranger),
+    ).rejects.toThrow("Untrusted sender");
+  });
+
+  it("checks the latest GitHub release through Electron's net stack", async () => {
+    await loadMain();
+    mocks.net.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => release("0.1.0"),
+      text: async () => "",
+      body: null,
+    });
+
+    const info = await ipcHandler("couch:update-check")(trusted());
+
+    expect(info).toEqual({
+      current: "0.1.0",
+      latest: "0.1.0",
+      available: false,
+      canInstall: false,
+    });
+    expect(mocks.net.fetch).toHaveBeenCalledWith(
+      "https://api.github.com/repos/Winde/dropout-steamos/releases/latest",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          accept: "application/vnd.github+json",
+        }),
+      }),
+    );
+  });
+
+  it("opens the releases page in the system browser", async () => {
+    await loadMain();
+
+    ipcHandler("couch:update-page")(trusted());
+
+    expect(mocks.shell.openExternal).toHaveBeenCalledWith(
+      "https://github.com/Winde/dropout-steamos/releases",
+    );
   });
 });
 

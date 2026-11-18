@@ -37,8 +37,16 @@ troubleshooting, is [docs/install-steamos.md](docs/install-steamos.md).
 Set the shortcut's controller layout to **Gamepad** once: the installer cannot
 choose it for you. The app reads a standard gamepad.
 
-To update, re-run the installer; there is no in-app updater. It replaces the
-AppImage in place, so the Steam entry and its artwork stay valid.
+Drop-In updates itself from inside the app. The storefront header carries a
+**Drop-In vX.Y.Z / Check for updates** stamp; **Y** on a controller opens the
+same dialog from anywhere outside the player. **Update now** downloads the
+release, checks it against `SHA256SUMS.txt`, and restarts into it. Nothing
+installs on its own. A build from before this feature has no updater, so
+upgrade it once with the installer; after that the app keeps itself current.
+
+The installer remains the fallback: re-run it for a first install, a machine
+without write access to the AppImage, or to repair one. It replaces the AppImage
+in place, so the Steam entry and its artwork stay valid.
 
 ## Run
 
@@ -67,7 +75,11 @@ choose initial focus, consume controller actions or row edges, and refine the
 focusable list. One mod is one independently removable behaviour: split
 unrelated tweaks into separate mods even when they share a page. Add a file and
 one line to add a change; delete the line to remove it. The Electron shell
-settings (window, locale, permissions) stay in `src/main/`.
+settings (window, locale, permissions, updater) stay in `src/main/`.
+
+The version/update line is itself a mod: `src/tv/mods/updates.ts` injects the
+header entry and opens the shadow-DOM dialog. `src/main/updater.ts` does the
+GitHub check and the verified AppImage swap behind IPC.
 
 ## Steam Machine
 
@@ -89,6 +101,7 @@ settings (window, locale, permissions) stay in `src/main/`.
 | Change dropdown (season, sort, language) | A opens picker; up/down moves; A confirms, B closes | Enter opens picker; ↑/↓ moves; Enter confirms, Esc closes |
 | Seek ±1min | LT / RT | — |
 | Player controls | D-pad up / down, Y / Start | ↑ / ↓, M |
+| Check for updates | Y (outside the player) | Y (outside the player) |
 | Quit | B on Home | Ctrl+Q |
 | Fullscreen | — | F11 |
 

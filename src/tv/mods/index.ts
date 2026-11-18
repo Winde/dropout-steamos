@@ -14,6 +14,7 @@ import { scrollbars } from "./scrollbars";
 import { searchFocus } from "./search-focus";
 import { searchShortcut } from "./search-shortcut";
 import { selectPicker } from "./select-picker";
+import { updates } from "./updates";
 import { watchLayout } from "./watch-layout";
 import type { Mod } from "./types";
 
@@ -40,6 +41,9 @@ export const MODS: Mod[] = [
 
   // Page behaviour. The watch page owns every action, so it comes first.
   player,
+  // Before the page's B handlers: the update dialog owns every action while
+  // it is open, including the back press that would otherwise leave or quit.
+  updates,
   selectPicker,
   cookieFocus,
   loginFocus,

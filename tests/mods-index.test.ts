@@ -40,15 +40,26 @@ describe("mod registry", () => {
       "search-focus",
       "search-shortcut",
       "select-picker",
+      "updates",
       "watch-layout",
     ]);
   });
 
   it("keeps the player ahead of the other action handlers", () => {
+    expect(ids.indexOf("player")).toBeLessThan(ids.indexOf("updates"));
     expect(ids.indexOf("player")).toBeLessThan(ids.indexOf("select-picker"));
     expect(ids.indexOf("player")).toBeLessThan(ids.indexOf("login-back"));
     expect(ids.indexOf("player")).toBeLessThan(ids.indexOf("home-back"));
     expect(ids.indexOf("player")).toBeLessThan(ids.indexOf("search-shortcut"));
+  });
+
+  it("lets the update dialog own input before the page's B handlers", () => {
+    expect(ids.indexOf("updates")).toBeLessThan(ids.indexOf("login-back"));
+    expect(ids.indexOf("updates")).toBeLessThan(ids.indexOf("home-back"));
+  });
+
+  it("keeps the update chip off the watch page", () => {
+    expect(byId("updates").pages).toEqual(["catalog", "login", "other"]);
   });
 
   it("scopes mods to the pages they belong to", () => {
@@ -74,6 +85,7 @@ describe("mod registry", () => {
       "catalog-hero",
       "scrollbars",
       "watch-layout",
+      "updates",
     ]) {
       // Vitest stubs plain CSS imports, so only the presence of the import is
       // visible here; content is checked from disk below.
@@ -111,5 +123,12 @@ describe("site CSS", () => {
     const css = shippedCss("watch-player.css");
     expect(css).toContain("html.couch-watch #watch-player");
     expect(css).toContain("inset: 0");
+  });
+
+  it("styles the header version line without competing with Sign In", () => {
+    const css = shippedCss("updates.css");
+    expect(css).toContain(".couch-update");
+    expect(css).toContain("#bebebb");
+    expect(css).toContain("#feea3b");
   });
 });

@@ -1,0 +1,53 @@
+/*
+ * Site change: the Drop-In version and update entry.
+ * It sits in the header's secondary actions, as a two-line build stamp so the
+ * version stays visible without competing with Sign In. It is a plain button,
+ * so the D-pad reaches it like the links beside it. The update dialog itself
+ * lives in a shadow root and is styled there.
+ */.couch-update {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  margin-left: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff !important;
+  font: inherit;
+  line-height: 1.1;
+  text-align: right;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.couch-update:hover,
+.couch-update:focus {
+  color: #fff !important;
+}
+
+.couch-update-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.couch-update-action {
+  color: #bebebb !important;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.couch-update:hover .couch-update-action,
+.couch-update:focus .couch-update-action {
+  color: #fff !important;
+}
+
+.couch-update.available .couch-update-action {
+  color: #feea3b !important;
+  font-weight: 700;
+}
+
+.couch-update.checking {
+  opacity: 0.6;
+}

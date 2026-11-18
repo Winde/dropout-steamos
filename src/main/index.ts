@@ -1,7 +1,14 @@
-import { app, BrowserWindow, ipcMain, session, shell } from "electron";
+import { app, BrowserWindow, ipcMain, net, session, shell } from "electron";
+import type { IpcMainInvokeEvent } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import { pinEnglish } from "./locale";
+import {
+  currentAppImage,
+  RELEASES_PAGE,
+  relaunchArgs,
+  Updater,
+} from "./updater";
 
 const START_URL = "https://watch.dropout.tv/browse";
 
@@ -33,6 +40,19 @@ app.commandLine.appendSwitch(
 app.setName("Drop-In");
 
 let win: BrowserWindow | null = null;
+
+const updater = new Updater({
+  currentVersion: () => app.getVersion(),
+  appImage: () => currentAppImage(process.env),
+  // Electron's net stack, like the rest of the app: it follows the system's
+  // proxy settings where Node's own fetch would not.
+  fetch: (url, init) => net.fetch(url, init),
+});
+
+/** The TV layer is the only caller that can reach these handlers. */
+function assertTrusted(event: IpcMainInvokeEvent): void {
+  if (event.sender !== win?.webContents) throw new Error("Untrusted sender");
+}
 
 function isAllowedNavigation(rawUrl: string): boolean {
   try {
@@ -158,6 +178,42 @@ if (!app.requestSingleInstanceLock()) {
 
   void app.whenReady().then(async () => {
     ipcMain.on("couch:quit", () => app.quit());
+
+    ipcMain.handle("couch:version", (event) => {
+      assertTrusted(event);
+      return app.getVersion();
+    });
+
+    // GitHub Releases is the update channel. The renderer never handles the
+    // download: it asks, shows state, and the main process swaps the AppImage.
+    ipcMain.handle("couch:update-check", (event) => {
+      assertTrusted(event);
+      return updater.check();
+    });
+
+    ipcMain.handle("couch:update-notes", (event) => {
+      assertTrusted(event);
+      return updater.notes();
+    });
+
+    ipcMain.handle("couch:update-install", async (event) => {
+      assertTrusted(event);
+      const appImage = await updater.install();
+      // An AppImage runs an inner binary from its own read-only mount, so
+      // process.execPath would be gone by the time the relaunch happens. Start
+      // the file that was just replaced instead; Electron does that once this
+      // instance has exited, which keeps the single-instance lock uncontended.
+      app.relaunch({
+        execPath: appImage,
+        args: relaunchArgs(process.argv.slice(1)),
+      });
+      app.quit();
+    });
+
+    ipcMain.on("couch:update-page", (event) => {
+      if (event.sender !== win?.webContents) return;
+      void shell.openExternal(RELEASES_PAGE);
+    });
 
     await pinEnglish();
 
