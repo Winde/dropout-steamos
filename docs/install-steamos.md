@@ -82,6 +82,13 @@ In Game Mode Steam sets the variables the app already uses to start fullscreen.
 If you launch it from Desktop Mode and want it fullscreen, add `--fullscreen` to
 the shortcut's launch options.
 
+Game Mode also sets `GTK_IM_MODULE=Steam`, whose input method delivers the
+on-screen keyboard's text twice. The app replaces that one value with GTK's
+simple context before Chromium starts, so typing lands once; a desktop session's
+`ibus` and any module you set yourself are left alone. Do not pin
+`GTK_IM_MODULE` in the shortcut's launch options: the app then keeps your value
+and cannot make that fix.
+
 ## If it will not start
 
 - **"Cannot mount AppImage"**: FUSE is unhappy. Add

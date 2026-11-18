@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, net, session, shell } from "electron";
 import type { IpcMainInvokeEvent } from "electron";
 import fs from "node:fs";
 import path from "node:path";
+import { useSimpleInputMethod } from "./linux-env";
 import { pinEnglish } from "./locale";
 import {
   currentAppImage,
@@ -9,6 +10,10 @@ import {
   relaunchArgs,
   Updater,
 } from "./updater";
+
+// Before Chromium creates its input method and GTK loads a module by name:
+// Steam's module types the on-screen keyboard's text twice in Game Mode.
+useSimpleInputMethod(process.env);
 
 const START_URL = "https://watch.dropout.tv/browse";
 
