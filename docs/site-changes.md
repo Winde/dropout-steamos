@@ -81,6 +81,21 @@ directory); dev builds and other packages show a releases-page action instead.
 Release assets must keep the electron-builder name
 `Drop-In-<version>-x86_64.AppImage` and ship `SHA256SUMS.txt`.
 
+## Login
+
+### Passwordless sign-in link
+
+**File:** `src/tv/mods/login-magic-link.ts`
+
+The password step renders **Email me a sign in link** as `#signin-magic-submit`
+(also `.signin-flow__password-form-magic-btn`), an `<a>` with no `href`. That
+leaves it out of both the browser tab order and the TV focusable selector, so
+neither Tab nor the D-pad could reach it. The mod adds `tabindex="0"` and
+`role="button"` on setup; A/Enter then follow the normal select path and click
+the element, which submits the site's magic form.
+
+- To undo: remove `loginMagicLink` from `src/tv/mods/index.ts`.
+
 ## Shell behaviours (not DOM patches)
 
 | Change | File | What it does |
@@ -99,7 +114,9 @@ These selectors are observed on the live site and are the fragile part:
 - `#watch-info` — hidden by the edge-to-edge layout; not removed from the DOM.
 - `#ketch-banner`, `#ketch-banner-button-tertiary` — consent banner.
 - `.carousel` — catalog hero.
-- `#signin-email-input`, `#signin-password-input` — login (see `src/tv/mods/login-focus.ts`, `src/tv/mods/login-back.ts` and `src/tv/focus.ts`).
+- `#signin-email-input`, `#signin-password-input`, `#signin-magic-submit` — login
+  (see `src/tv/mods/login-focus.ts`, `src/tv/mods/login-magic-link.ts`,
+  `src/tv/mods/login-back.ts` and `src/tv/focus.ts`).
 - `.browse-item-card` — one D-pad stop per card (see `src/tv/mods/card-focus.ts`).
 - `.js-switch-season`, `[data-sort-by]`, `#language-switcher` — native selects opened by the TV picker (see `src/tv/mods/select-picker.ts`).
 - `.site-header .user-actions` — the version/update entry sits in the header's secondary actions (see `src/tv/mods/updates.ts`).

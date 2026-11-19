@@ -9,6 +9,7 @@ import { focusRing } from "./focus-ring";
 import { homeBack } from "./home-back";
 import { loginBack } from "./login-back";
 import { loginFocus } from "./login-focus";
+import { loginMagicLink } from "./login-magic-link";
 import { player } from "./player";
 import { scrollbars } from "./scrollbars";
 import { searchFocus } from "./search-focus";
@@ -47,6 +48,7 @@ export const MODS: Mod[] = [
   selectPicker,
   cookieFocus,
   loginFocus,
+  loginMagicLink,
   loginBack,
   homeBack,
   searchShortcut,

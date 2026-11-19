@@ -35,6 +35,7 @@ describe("mod registry", () => {
       "home-back",
       "login-back",
       "login-focus",
+      "login-magic-link",
       "player",
       "scrollbars",
       "search-focus",
@@ -70,6 +71,7 @@ describe("mod registry", () => {
     expect(byId("catalog-focus").pages).toEqual(["catalog"]);
     expect(byId("search-focus").pages).toEqual(["catalog"]);
     expect(byId("login-focus").pages).toEqual(["login"]);
+    expect(byId("login-magic-link").pages).toEqual(["login"]);
     expect(byId("login-back").pages).toEqual(["login"]);
   });
 
