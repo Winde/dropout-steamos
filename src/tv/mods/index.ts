@@ -12,6 +12,7 @@ import { loginBack } from "./login-back";
 import { loginFocus } from "./login-focus";
 import { loginMagicLink } from "./login-magic-link";
 import { player } from "./player";
+import { rowTitleFocus } from "./row-title-focus";
 import { scrollbars } from "./scrollbars";
 import { searchFocus } from "./search-focus";
 import { searchShortcut } from "./search-shortcut";
@@ -56,6 +57,7 @@ export const MODS: Mod[] = [
 
   // Focus and entry behaviour.
   cardFocus,
+  rowTitleFocus,
   carouselEdge,
   catalogFocus,
   searchFocus,

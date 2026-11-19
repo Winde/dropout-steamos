@@ -38,6 +38,7 @@ describe("mod registry", () => {
       "login-focus",
       "login-magic-link",
       "player",
+      "row-title-focus",
       "scrollbars",
       "search-focus",
       "search-shortcut",
@@ -71,6 +72,7 @@ describe("mod registry", () => {
     expect(byId("catalog-hero").pages).toEqual(["catalog"]);
     expect(byId("catalog-focus").pages).toEqual(["catalog"]);
     expect(byId("carousel-edge").pages).toEqual(["catalog"]);
+    expect(byId("row-title-focus").pages).toEqual(["catalog"]);
     expect(byId("search-focus").pages).toEqual(["catalog"]);
     expect(byId("login-focus").pages).toEqual(["login"]);
     expect(byId("login-magic-link").pages).toEqual(["login"]);
