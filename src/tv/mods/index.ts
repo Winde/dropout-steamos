@@ -1,4 +1,5 @@
 import { cardFocus } from "./card-focus";
+import { carouselEdge } from "./carousel-edge";
 import { catalogFocus } from "./catalog-focus";
 import { catalogHero } from "./catalog-hero";
 import { chromeless } from "./chromeless";
@@ -55,6 +56,7 @@ export const MODS: Mod[] = [
 
   // Focus and entry behaviour.
   cardFocus,
+  carouselEdge,
   catalogFocus,
   searchFocus,
 

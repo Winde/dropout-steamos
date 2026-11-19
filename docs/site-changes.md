@@ -81,6 +81,22 @@ directory); dev builds and other packages show a releases-page action instead.
 Release assets must keep the electron-builder name
 `Drop-In-<version>-x86_64.AppImage` and ship `SHA256SUMS.txt`.
 
+## Catalog
+
+### Carousel edges
+
+**File:** `src/tv/mods/carousel-edge.ts`
+
+Slick marks every slide outside the current window `aria-hidden`, so the focus
+collector sees no card past the last visible one and a left/right press at a
+row's edge did nothing. The mod claims that edge press, clicks the site's own
+`.browse-right-arrow` or `.browse-left-arrow`, and after the 500 ms slide moves
+focus to the newly revealed card. The hidden left arrow (`arrow-enter` absent)
+and `slick-disabled` arrows are left alone, and repeated presses during the
+slide are swallowed so one press pages once.
+
+- To undo: remove `carouselEdge` from `src/tv/mods/index.ts`.
+
 ## Login
 
 ### Passwordless sign-in link
@@ -118,5 +134,7 @@ These selectors are observed on the live site and are the fragile part:
   (see `src/tv/mods/login-focus.ts`, `src/tv/mods/login-magic-link.ts`,
   `src/tv/mods/login-back.ts` and `src/tv/focus.ts`).
 - `.browse-item-card` — one D-pad stop per card (see `src/tv/mods/card-focus.ts`).
+- `.browse-row`, `.browse-left-arrow`, `.browse-right-arrow` — a row's cards and
+  the arrows its edge press clicks (see `src/tv/mods/carousel-edge.ts`).
 - `.js-switch-season`, `[data-sort-by]`, `#language-switcher` — native selects opened by the TV picker (see `src/tv/mods/select-picker.ts`).
 - `.site-header .user-actions` — the version/update entry sits in the header's secondary actions (see `src/tv/mods/updates.ts`).
