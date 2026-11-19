@@ -99,13 +99,14 @@ slide are swallowed so one press pages once.
 
 ### Row titles
 
-**File:** `src/tv/mods/row-title-focus.ts`
+**Files:** `src/tv/mods/row-title-focus.ts`,
+`src/tv/mods/row-title-focus.css`
 
-Each carousel heading is an `<h1><a>` linking to the collection page, so the
-D-pad stopped on "New Releases", "Trending", and the like before reaching the
-cards. A TV row title is a label, not a destination; the mod drops that link
-from the focus candidates. **View all** (`.view-more-link`) remains a focus
-stop, so the collection page is still reachable.
+Each carousel heading is an `<h1><a>` linking to the collection page, and the
+**View all** link beside it goes to the same place. On a TV the heading labels
+the row, so both links are removed from the D-pad and tab order. View all is
+hidden completely: it sat at the row's right edge, where a press belongs to
+paging.
 
 - To undo: remove `rowTitleFocus` from `src/tv/mods/index.ts`.
 
@@ -149,7 +150,7 @@ These selectors are observed on the live site and are the fragile part:
 - `.browse-row`, `.browse-left-arrow`, `.browse-right-arrow` — a row's cards and
   the arrows its edge press clicks (see `src/tv/mods/carousel-edge.ts`).
 - `.horizontal-row-header`, `.view-more-link` — row heading and its **View all**
-  link; the heading is skipped, View all stays focusable (see
-  `src/tv/mods/row-title-focus.ts`).
+  link; both are removed from focus, and View all is hidden (see
+  `src/tv/mods/row-title-focus.ts` and `row-title-focus.css`).
 - `.js-switch-season`, `[data-sort-by]`, `#language-switcher` — native selects opened by the TV picker (see `src/tv/mods/select-picker.ts`).
 - `.site-header .user-actions` — the version/update entry sits in the header's secondary actions (see `src/tv/mods/updates.ts`).

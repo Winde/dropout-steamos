@@ -1,0 +1,8 @@
+/*
+ * Site change: row headers.
+ * "View all" repeats the row title link. On a TV it is pointer furniture and
+ * sits at the row's edge, where an edge press belongs to paging.
+ */
+.horizontal-row-header.view-more-container {
+  display: none !important;
+}

@@ -92,6 +92,7 @@ describe("mod registry", () => {
       "scrollbars",
       "watch-layout",
       "updates",
+      "row-title-focus",
     ]) {
       // Vitest stubs plain CSS imports, so only the presence of the import is
       // visible here; content is checked from disk below.
@@ -136,5 +137,11 @@ describe("site CSS", () => {
     expect(css).toContain(".dropin-update");
     expect(css).toContain("#bebebb");
     expect(css).toContain("#feea3b");
+  });
+
+  it("hides the View all row action", () => {
+    const css = shippedCss("row-title-focus.css");
+    expect(css).toContain(".horizontal-row-header.view-more-container");
+    expect(css).toContain("display: none");
   });
 });

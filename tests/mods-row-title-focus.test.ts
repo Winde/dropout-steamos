@@ -48,10 +48,10 @@ describe("row-title-focus", () => {
       .collect!([candidate(title), candidate(viewAll), candidate(card)], ctx)
       .map(({ el }) => el);
 
-    expect(found).toEqual([viewAll, card]);
+    expect(found).toEqual([card]);
   });
 
-  it("removes the heading from the tab order and keeps View all", () => {
+  it("removes both row header links from the tab order", () => {
     const title = headerLink(
       "New Releases",
       "site-font-primary-color",
@@ -66,7 +66,7 @@ describe("row-title-focus", () => {
     rowTitleFocus.setup!(ctx);
 
     expect(title.tabIndex).toBe(-1);
-    expect(viewAll.tabIndex).toBe(0);
+    expect(viewAll.tabIndex).toBe(-1);
   });
 
   it("catches a title that renders after setup", async () => {
