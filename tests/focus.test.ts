@@ -151,10 +151,10 @@ describe("collectFocusables", () => {
     document.body.append(arrow);
     mockRect(arrow, 10, 10, 40, 40);
 
-    const couch = document.createElement("button");
-    couch.dataset.couch = "osd";
-    document.body.append(couch);
-    mockRect(couch, 10, 80, 40, 40);
+    const overlay = document.createElement("button");
+    overlay.dataset.dropin = "osd";
+    document.body.append(overlay);
+    mockRect(overlay, 10, 80, 40, 40);
 
     const normal = button("Play", 10, 140);
     expect(collectFocusables().map((candidate) => candidate.el)).toEqual([
@@ -222,11 +222,11 @@ describe("focusElement", () => {
     const link = anchor("/show");
     focusElement(link);
 
-    expect(link.classList.contains("couch-focus")).toBe(true);
+    expect(link.classList.contains("dropin-focus")).toBe(true);
     expect(document.activeElement).toBe(link);
     expect(getCurrent()).toBe(link);
     expect(
-      sessionStorage.getItem(`couch:focus:${location.pathname}`),
+      sessionStorage.getItem(`dropin:focus:${location.pathname}`),
     ).toBe("/show");
   });
 
@@ -236,8 +236,8 @@ describe("focusElement", () => {
     focusElement(first);
     focusElement(second);
 
-    expect(first.classList.contains("couch-focus")).toBe(false);
-    expect(second.classList.contains("couch-focus")).toBe(true);
+    expect(first.classList.contains("dropin-focus")).toBe(false);
+    expect(second.classList.contains("dropin-focus")).toBe(true);
     expect(getCurrent()).toBe(second);
   });
 
@@ -245,7 +245,7 @@ describe("focusElement", () => {
     const link = anchor("/show", 20, 30);
     focusElement(link);
 
-    const ring = document.querySelector<HTMLElement>('[data-couch="ring"]');
+    const ring = document.querySelector<HTMLElement>('[data-dropin="ring"]');
     expect(ring).not.toBeNull();
     expect(ring?.style.opacity).toBe("1");
   });
@@ -330,7 +330,7 @@ describe("restoreFocus", () => {
 
   it("restores the remembered link for the current path", () => {
     const link = anchor("/dimension-20");
-    sessionStorage.setItem(`couch:focus:${location.pathname}`, "/dimension-20");
+    sessionStorage.setItem(`dropin:focus:${location.pathname}`, "/dimension-20");
 
     expect(restoreFocus()).toBe(true);
     expect(getCurrent()).toBe(link);
@@ -340,14 +340,14 @@ describe("restoreFocus", () => {
   it("does not restore hidden links", () => {
     const link = anchor("/hidden");
     link.style.display = "none";
-    sessionStorage.setItem(`couch:focus:${location.pathname}`, "/hidden");
+    sessionStorage.setItem(`dropin:focus:${location.pathname}`, "/hidden");
 
     expect(restoreFocus()).toBe(false);
   });
 
   it("returns false when the remembered link is gone", () => {
     anchor("/something-else");
-    sessionStorage.setItem(`couch:focus:${location.pathname}`, "/missing");
+    sessionStorage.setItem(`dropin:focus:${location.pathname}`, "/missing");
     expect(restoreFocus()).toBe(false);
   });
 });
@@ -376,7 +376,7 @@ describe("focusInitial", () => {
   it("restores remembered focus before choosing a card", () => {
     const remembered = anchor("/remembered", 700, 600);
     const firstCard = card("/first", 10, 100);
-    sessionStorage.setItem(`couch:focus:${location.pathname}`, "/remembered");
+    sessionStorage.setItem(`dropin:focus:${location.pathname}`, "/remembered");
 
     focusInitial();
     expect(getCurrent()).toBe(remembered);
@@ -652,24 +652,24 @@ describe("adopting site focus", () => {
     const link = anchor("/adopted");
     link.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
 
-    expect(link.classList.contains("couch-focus")).toBe(true);
+    expect(link.classList.contains("dropin-focus")).toBe(true);
     expect(getCurrent()).toBe(link);
   });
 
   it("ignores the TV layer's own elements", () => {
     const own = document.createElement("button");
-    own.dataset.couch = "osd";
+    own.dataset.dropin = "osd";
     document.body.append(own);
     mockRect(own, 40, 40);
     own.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
 
-    expect(own.classList.contains("couch-focus")).toBe(false);
+    expect(own.classList.contains("dropin-focus")).toBe(false);
   });
 
   it("ignores invisible elements", () => {
     const hidden = anchor("/hidden");
     hidden.style.visibility = "hidden";
     hidden.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
-    expect(hidden.classList.contains("couch-focus")).toBe(false);
+    expect(hidden.classList.contains("dropin-focus")).toBe(false);
   });
 });

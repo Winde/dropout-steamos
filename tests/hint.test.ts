@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 type Hint = typeof import("../src/tv/hint");
 
 function hintHost(): HTMLElement {
-  const host = document.querySelector<HTMLElement>('[data-couch="hint"]');
+  const host = document.querySelector<HTMLElement>('[data-dropin="hint"]');
   if (!host) throw new Error("hint was not created");
   return host;
 }
@@ -21,7 +21,7 @@ async function load(): Promise<Hint> {
 beforeEach(() => {
   vi.resetModules();
   vi.useFakeTimers();
-  for (const host of document.querySelectorAll('[data-couch="hint"]')) {
+  for (const host of document.querySelectorAll('[data-dropin="hint"]')) {
     host.remove();
   }
 });
@@ -71,7 +71,7 @@ describe("showHint", () => {
     expect(pill().classList.contains("show")).toBe(false);
 
     hint.showHint("Third");
-    expect(document.querySelectorAll('[data-couch="hint"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-dropin="hint"]')).toHaveLength(1);
     expect(pill().textContent).toBe("Third");
     expect(pill().classList.contains("show")).toBe(true);
   });

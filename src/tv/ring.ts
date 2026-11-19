@@ -7,7 +7,7 @@ const RING_Z = "2147483647";
 function ensureRing(): HTMLElement {
   if (ring) return ring;
   const element = document.createElement("div");
-  element.dataset.couch = "ring";
+  element.dataset.dropin = "ring";
   element.style.cssText = [
     "position:fixed",
     "pointer-events:none",

@@ -12,7 +12,7 @@ app.commandLine.appendSwitch('disable-gpu')
 app.on('window-all-closed', () => {})
 
 async function render(svg, size, out) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'couch-art-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'dropin-art-'))
   const page = path.join(dir, 'page.html')
   fs.writeFileSync(
     page,

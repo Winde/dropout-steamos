@@ -46,7 +46,7 @@ beforeEach(() => {
     navigate: mocks.navigate,
     focus: mocks.focus,
   });
-  delete (window as unknown as Record<string, unknown>).__couchTv;
+  delete (window as unknown as Record<string, unknown>).__dropinTv;
   document.documentElement.className = "";
   window.history.replaceState({}, "", "/browse");
 });
@@ -59,7 +59,7 @@ describe("run", () => {
 
     expect(mocks.pageKind).toHaveBeenCalledWith("/browse");
     expect(mocks.startMods).toHaveBeenCalledWith("catalog");
-    expect(document.documentElement.classList.contains("couch-catalog")).toBe(
+    expect(document.documentElement.classList.contains("dropin-catalog")).toBe(
       true,
     );
     expect(inputOptions().watchMode).toBe(false);
@@ -78,7 +78,7 @@ describe("run", () => {
     await run();
 
     expect(mocks.startMods).toHaveBeenCalledWith("watch");
-    expect(document.documentElement.classList.contains("couch-watch")).toBe(true);
+    expect(document.documentElement.classList.contains("dropin-watch")).toBe(true);
     expect(inputOptions().watchMode).toBe(true);
   });
 
@@ -89,7 +89,7 @@ describe("run", () => {
 
     await run();
 
-    expect(document.documentElement.classList.contains("couch-login")).toBe(
+    expect(document.documentElement.classList.contains("dropin-login")).toBe(
       true,
     );
   });
@@ -106,14 +106,14 @@ describe("run", () => {
   });
 
   it("does nothing when another run already claimed the page", async () => {
-    (window as unknown as Record<string, unknown>).__couchTv = true;
+    (window as unknown as Record<string, unknown>).__dropinTv = true;
     const { run } = await load();
 
     await run();
 
     expect(mocks.startMods).not.toHaveBeenCalled();
     expect(mocks.startInput).not.toHaveBeenCalled();
-    expect(document.documentElement.classList.contains("couch-catalog")).toBe(
+    expect(document.documentElement.classList.contains("dropin-catalog")).toBe(
       false,
     );
   });

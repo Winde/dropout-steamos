@@ -63,9 +63,9 @@ export function mountOsd(anchor: HTMLElement): void {
   if (host?.isConnected) return;
 
   host = document.createElement("div");
-  host.dataset.couch = "osd";
+  host.dataset.dropin = "osd";
   host.style.setProperty(
-    "--couch-font",
+    "--dropin-font",
     getComputedStyle(document.body).fontFamily || "system-ui, sans-serif",
   );
 
@@ -91,7 +91,7 @@ export function mountOsd(anchor: HTMLElement): void {
         padding: 28px 32px max(18px, 3vh);
         background: linear-gradient(to top, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0));
         color: #fff;
-        font: 600 16px/1.2 var(--couch-font, system-ui, sans-serif);
+        font: 600 16px/1.2 var(--dropin-font, system-ui, sans-serif);
         opacity: 0;
         visibility: hidden;
         transition: opacity 160ms ease;

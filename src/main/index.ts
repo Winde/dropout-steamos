@@ -124,7 +124,7 @@ function createWindow(): void {
 
   win.webContents.on("did-fail-load", (_event, code, description, url) => {
     if (code === -3) return; // aborted by a redirect
-    console.error(`[couch] failed to load ${url}: ${description} (${code})`);
+    console.error(`[dropin] failed to load ${url}: ${description} (${code})`);
   });
 
   win.webContents.on("before-input-event", (event, input) => {
@@ -150,10 +150,10 @@ function createWindow(): void {
           const image = await win?.webContents.capturePage();
           if (image) {
             fs.writeFileSync(screenshotPath, image.toPNG());
-            console.log(`[couch] screenshot: ${screenshotPath}`);
+            console.log(`[dropin] screenshot: ${screenshotPath}`);
           }
         } catch (error) {
-          console.error("[couch] screenshot failed", error);
+          console.error("[dropin] screenshot failed", error);
         } finally {
           app.quit();
         }
@@ -182,26 +182,26 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   void app.whenReady().then(async () => {
-    ipcMain.on("couch:quit", () => app.quit());
+    ipcMain.on("dropin:quit", () => app.quit());
 
-    ipcMain.handle("couch:version", (event) => {
+    ipcMain.handle("dropin:version", (event) => {
       assertTrusted(event);
       return app.getVersion();
     });
 
     // GitHub Releases is the update channel. The renderer never handles the
     // download: it asks, shows state, and the main process swaps the AppImage.
-    ipcMain.handle("couch:update-check", (event) => {
+    ipcMain.handle("dropin:update-check", (event) => {
       assertTrusted(event);
       return updater.check();
     });
 
-    ipcMain.handle("couch:update-notes", (event) => {
+    ipcMain.handle("dropin:update-notes", (event) => {
       assertTrusted(event);
       return updater.notes();
     });
 
-    ipcMain.handle("couch:update-install", async (event) => {
+    ipcMain.handle("dropin:update-install", async (event) => {
       assertTrusted(event);
       const appImage = await updater.install();
       // An AppImage runs an inner binary from its own read-only mount, so
@@ -215,7 +215,7 @@ if (!app.requestSingleInstanceLock()) {
       app.quit();
     });
 
-    ipcMain.on("couch:update-page", (event) => {
+    ipcMain.on("dropin:update-page", (event) => {
       if (event.sender !== win?.webContents) return;
       void shell.openExternal(RELEASES_PAGE);
     });

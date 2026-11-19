@@ -19,7 +19,7 @@ async function load(): Promise<{ osd: Osd; anchor: HTMLElement; host: HTMLElemen
   const anchor = document.createElement("div");
   document.body.append(anchor);
   osd.mountOsd(anchor);
-  const host = anchor.querySelector<HTMLElement>('[data-couch="osd"]');
+  const host = anchor.querySelector<HTMLElement>('[data-dropin="osd"]');
   if (!host) throw new Error("OSD was not mounted");
   return { osd, anchor, host };
 }
@@ -43,14 +43,14 @@ describe("mountOsd", () => {
   it("mounts one shadow-DOM overlay over the player", async () => {
     const { osd, anchor, host } = await load();
 
-    expect(host.dataset.couch).toBe("osd");
+    expect(host.dataset.dropin).toBe("osd");
     expect(anchor.contains(host)).toBe(true);
     expect(host.shadowRoot).not.toBeNull();
     expect(buttons(host)).toHaveLength(4);
     expect(barPart(host, ".bar").classList.contains("visible")).toBe(true);
 
     osd.mountOsd(anchor);
-    expect(anchor.querySelectorAll('[data-couch="osd"]')).toHaveLength(1);
+    expect(anchor.querySelectorAll('[data-dropin="osd"]')).toHaveLength(1);
   });
 
   it("renders the initial stopped state", async () => {

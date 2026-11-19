@@ -321,7 +321,7 @@ describe("startup", () => {
 
   it("wires the quit IPC channel", async () => {
     await loadMain();
-    const quit = mocks.ipcHandlers.get("couch:quit");
+    const quit = mocks.ipcHandlers.get("dropin:quit");
     expect(quit).toBeTypeOf("function");
 
     quit?.();
@@ -354,24 +354,24 @@ describe("updates", () => {
   it("reports the running version to the TV layer", async () => {
     await loadMain();
 
-    expect(ipcHandler("couch:version")(trusted())).toBe("0.1.0");
+    expect(ipcHandler("dropin:version")(trusted())).toBe("0.1.0");
   });
 
   it("refuses update requests from another sender", async () => {
     await loadMain();
     const stranger = { sender: {} };
 
-    expect(() => ipcHandler("couch:version")(stranger)).toThrow(
+    expect(() => ipcHandler("dropin:version")(stranger)).toThrow(
       "Untrusted sender",
     );
-    expect(() => ipcHandler("couch:update-check")(stranger)).toThrow(
+    expect(() => ipcHandler("dropin:update-check")(stranger)).toThrow(
       "Untrusted sender",
     );
-    expect(() => ipcHandler("couch:update-notes")(stranger)).toThrow(
+    expect(() => ipcHandler("dropin:update-notes")(stranger)).toThrow(
       "Untrusted sender",
     );
     await expect(
-      ipcHandler("couch:update-install")(stranger),
+      ipcHandler("dropin:update-install")(stranger),
     ).rejects.toThrow("Untrusted sender");
   });
 
@@ -385,7 +385,7 @@ describe("updates", () => {
       body: null,
     });
 
-    const info = await ipcHandler("couch:update-check")(trusted());
+    const info = await ipcHandler("dropin:update-check")(trusted());
 
     expect(info).toEqual({
       current: "0.1.0",
@@ -406,7 +406,7 @@ describe("updates", () => {
   it("opens the releases page in the system browser", async () => {
     await loadMain();
 
-    ipcHandler("couch:update-page")(trusted());
+    ipcHandler("dropin:update-page")(trusted());
 
     expect(mocks.shell.openExternal).toHaveBeenCalledWith(
       "https://github.com/Winde/dropout-steamos/releases",

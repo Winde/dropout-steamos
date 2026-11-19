@@ -99,13 +99,13 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
 
     entry = document.createElement("button");
     entry.type = "button";
-    entry.className = "couch-update";
+    entry.className = "dropin-update";
     entry.setAttribute("aria-live", "polite");
 
     entryName = document.createElement("span");
-    entryName.className = "couch-update-name";
+    entryName.className = "dropin-update-name";
     entryAction = document.createElement("span");
-    entryAction.className = "couch-update-action";
+    entryAction.className = "dropin-update-action";
     entry.append(entryName, entryAction);
     entry.addEventListener("click", () => open());
 
@@ -114,7 +114,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     watchForHeader();
 
     void ipcRenderer
-      .invoke("couch:version")
+      .invoke("dropin:version")
       .then((value: string) => {
         version = String(value ?? "");
         renderEntry();
@@ -192,9 +192,9 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     if (dialogHost) return;
 
     dialogHost = document.createElement("div");
-    dialogHost.dataset.couch = "update-dialog";
+    dialogHost.dataset.dropin = "update-dialog";
     dialogHost.style.setProperty(
-      "--couch-font",
+      "--dropin-font",
       getComputedStyle(document.body).fontFamily || "system-ui, sans-serif",
     );
 
@@ -232,7 +232,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
           background: #141414;
           color: #fff;
           box-shadow: 0 28px 90px rgba(0, 0, 0, 0.76);
-          font: 500 16px/1.45 var(--couch-font, system-ui, sans-serif);
+          font: 500 16px/1.45 var(--dropin-font, system-ui, sans-serif);
           outline: none;
         }
         .eyebrow {
@@ -245,7 +245,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
         h2 {
           margin: 6px 0 8px;
           color: #fff;
-          font: 700 25px/1.2 var(--couch-font, system-ui, sans-serif);
+          font: 700 25px/1.2 var(--dropin-font, system-ui, sans-serif);
         }
         .message-row {
           display: flex;
@@ -299,13 +299,13 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
         .release h3 {
           margin: 0 0 5px;
           color: #feea3b;
-          font: 700 13px/1.2 var(--couch-font, system-ui, sans-serif);
+          font: 700 13px/1.2 var(--dropin-font, system-ui, sans-serif);
           letter-spacing: 0.04em;
         }
         .release p {
           margin: 0;
           color: rgba(255, 255, 255, 0.66);
-          font: 400 13px/1.5 var(--couch-font, system-ui, sans-serif);
+          font: 400 13px/1.5 var(--dropin-font, system-ui, sans-serif);
           white-space: pre-wrap;
           overflow-wrap: anywhere;
         }
@@ -325,7 +325,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
           border-radius: 10px;
           background: transparent;
           color: #fff;
-          font: 700 15px/1 var(--couch-font, system-ui, sans-serif);
+          font: 700 15px/1 var(--dropin-font, system-ui, sans-serif);
           cursor: pointer;
           outline: none;
         }
@@ -431,7 +431,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
 
     const seq = ++checkSeq;
     void ipcRenderer
-      .invoke("couch:update-check")
+      .invoke("dropin:update-check")
       .then((info: UpdateInfo) => {
         if (seq !== checkSeq) return;
         known = info.available ? info : null;
@@ -470,7 +470,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     renderDialog();
 
     void ipcRenderer
-      .invoke("couch:update-notes")
+      .invoke("dropin:update-notes")
       .then((releases: ReleaseNote[]) => {
         if (seq !== notesSeq) return;
         notes = Array.isArray(releases) ? releases : [];
@@ -490,7 +490,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     setPrompt({ name: "installing", latest });
 
     void ipcRenderer
-      .invoke("couch:update-install")
+      .invoke("dropin:update-install")
       .then(() => {
         if (!dialog) return;
         setPrompt({ name: "restarting", latest });
@@ -561,7 +561,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
               label: "Open releases",
               primary: true,
               run: () => {
-                ipcRenderer.send("couch:update-page");
+                ipcRenderer.send("dropin:update-page");
                 dismiss();
               },
             },

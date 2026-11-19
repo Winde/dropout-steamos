@@ -55,7 +55,7 @@ async function load(withFrame = true): Promise<Loaded> {
 }
 
 function osdHost(): HTMLElement | null {
-  return document.querySelector<HTMLElement>('[data-couch="osd"]');
+  return document.querySelector<HTMLElement>('[data-dropin="osd"]');
 }
 
 function osdPart(selector: string): HTMLElement {
@@ -66,7 +66,7 @@ function osdPart(selector: string): HTMLElement {
 }
 
 function hintText(): string | null {
-  const hosts = document.querySelectorAll<HTMLElement>('[data-couch="hint"]');
+  const hosts = document.querySelectorAll<HTMLElement>('[data-dropin="hint"]');
   const host = hosts[hosts.length - 1];
   return (
     host?.shadowRoot?.querySelector<HTMLElement>(".pill")?.textContent ?? null
@@ -87,7 +87,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   document.body.innerHTML = "";
   for (const host of document.querySelectorAll(
-    '[data-couch="hint"], [data-couch="osd"]',
+    '[data-dropin="hint"], [data-dropin="osd"]',
   )) {
     host.remove();
   }

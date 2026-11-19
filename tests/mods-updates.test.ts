@@ -28,9 +28,9 @@ interface Responses {
 function respond(responses: Responses = {}): void {
   mocks.invoke.mockImplementation((channel: string) => {
     switch (channel) {
-      case "couch:version":
+      case "dropin:version":
         return Promise.resolve("0.1.0");
-      case "couch:update-check":
+      case "dropin:update-check":
         return responses.check
           ? responses.check()
           : Promise.resolve({
@@ -39,13 +39,13 @@ function respond(responses: Responses = {}): void {
               available: true,
               canInstall: true,
             });
-      case "couch:update-notes":
+      case "dropin:update-notes":
         return responses.notes
           ? responses.notes()
           : Promise.resolve([
               { version: "0.2.0", notes: "Player changes." },
             ]);
-      case "couch:update-install":
+      case "dropin:update-install":
         return responses.install ? responses.install() : Promise.resolve();
       default:
         return Promise.reject(new Error(`unexpected channel ${channel}`));
@@ -76,7 +76,7 @@ function setup(options: { header?: boolean } = {}) {
   const ui = createUpdateUi(focus);
   ui.mount();
 
-  const entry = document.querySelector<HTMLButtonElement>(".couch-update");
+  const entry = document.querySelector<HTMLButtonElement>(".dropin-update");
   if (options.header !== false && !entry)
     throw new Error("update entry did not mount");
 
@@ -85,7 +85,7 @@ function setup(options: { header?: boolean } = {}) {
 
 function dialog(): ShadowRoot | null {
   return (
-    document.querySelector<HTMLElement>('[data-couch="update-dialog"]')
+    document.querySelector<HTMLElement>('[data-dropin="update-dialog"]')
       ?.shadowRoot ?? null
   );
 }
@@ -113,7 +113,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  for (const host of document.querySelectorAll("[data-couch]")) host.remove();
+  for (const host of document.querySelectorAll("[data-dropin]")) host.remove();
 });
 
 describe("header version line", () => {
@@ -140,7 +140,7 @@ describe("header version line", () => {
 
   it("survives a version request that fails", async () => {
     mocks.invoke.mockImplementation((channel: string) =>
-      channel === "couch:version"
+      channel === "dropin:version"
         ? Promise.reject(new Error("no version"))
         : Promise.resolve({
             current: "0.1.0",
@@ -161,12 +161,12 @@ describe("header version line", () => {
     const { ui } = setup({ header: false });
     await flush();
 
-    expect(document.querySelector(".couch-update")).toBeNull();
+    expect(document.querySelector(".dropin-update")).toBeNull();
 
     addHeader();
     await nextMutation();
 
-    expect(document.querySelector(".couch-update")?.closest(".site-header")).not.toBeNull();
+    expect(document.querySelector(".dropin-update")?.closest(".site-header")).not.toBeNull();
     expect(ui.isOpen()).toBe(false);
   });
 
@@ -268,7 +268,7 @@ describe("update dialog", () => {
     ui.action("select");
     await flush();
 
-    expect(mocks.invoke).toHaveBeenCalledWith("couch:update-install");
+    expect(mocks.invoke).toHaveBeenCalledWith("dropin:update-install");
     expect(title()).toBe("Updating Drop-In");
     expect(message()).toContain("Downloading Drop-In v0.2.0");
     expect(actionLabels()).toEqual([]);
@@ -320,7 +320,7 @@ describe("update dialog", () => {
         if (attempts === 1) {
           return Promise.reject(
             new Error(
-              "Error invoking remote method 'couch:update-check': Error: GitHub answered 500. Try again later.",
+              "Error invoking remote method 'dropin:update-check': Error: GitHub answered 500. Try again later.",
             ),
           );
         }
@@ -372,7 +372,7 @@ describe("update dialog", () => {
     ui.action("right");
     ui.action("select");
 
-    expect(mocks.send).toHaveBeenCalledWith("couch:update-page");
+    expect(mocks.send).toHaveBeenCalledWith("dropin:update-page");
     expect(dialog()).toBeNull();
   });
 
@@ -389,7 +389,7 @@ describe("update dialog", () => {
     await flush();
 
     const checks = mocks.invoke.mock.calls.filter(
-      ([channel]) => channel === "couch:update-check",
+      ([channel]) => channel === "dropin:update-check",
     );
     expect(checks).toHaveLength(1);
     expect(title()).toBe("Drop-In v0.2.0 is available");

@@ -105,6 +105,6 @@ describe("preload", () => {
 
     await loadPreload();
 
-    expect(error).toHaveBeenCalledWith("[couch] TV layer failed", failure);
+    expect(error).toHaveBeenCalledWith("[dropin] TV layer failed", failure);
   });
 });

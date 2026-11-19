@@ -5,7 +5,7 @@ its own mod in `src/tv/mods/`. If Dropout's DOM changes, check this list first:
 each entry names the file to edit and the selector it depends on.
 
 The single registry is `src/tv/mods/index.ts`; the runtime injects each CSS
-file as its own `<style data-couch-mod="…">` tag, so it can be inspected or
+file as its own `<style data-dropin-mod="…">` tag, so it can be inspected or
 removed from devtools without touching the others. Registry order is
 action/focus priority.
 
@@ -13,12 +13,12 @@ action/focus priority.
 
 | Change | File | Selector | Why | Remove when |
 | --- | --- | --- | --- | --- |
-| Focus ring | `src/tv/mods/focus-ring.css` | `.couch-focus` | The only focus affordance on a TV; outline does not change layout. Card links suppress the inner outline because the fixed TV ring already wraps the whole card. | The site ships a visible TV focus style. |
-| Hide pointer while idle | `src/tv/mods/cursor.css` | `html.couch-hide-cursor` | No mouse is needed; the cursor hides after 2.5 s. | Never (TV shell). |
-| Hide catalog hero | `src/tv/mods/catalog-hero.css` | `html.couch-catalog .carousel` | The autoplaying hero takes a full screen and duplicates row CTAs. | The site gets a static, TV-sized hero. |
+| Focus ring | `src/tv/mods/focus-ring.css` | `.dropin-focus` | The only focus affordance on a TV; outline does not change layout. Card links suppress the inner outline because the fixed TV ring already wraps the whole card. | The site ships a visible TV focus style. |
+| Hide pointer while idle | `src/tv/mods/cursor.css` | `html.dropin-hide-cursor` | No mouse is needed; the cursor hides after 2.5 s. | Never (TV shell). |
+| Hide catalog hero | `src/tv/mods/catalog-hero.css` | `html.dropin-catalog .carousel` | The autoplaying hero takes a full screen and duplicates row CTAs. | The site gets a static, TV-sized hero. |
 | Hide scrollbars | `src/tv/mods/scrollbar.css` | `html`, `::-webkit-scrollbar` | Scrollbars are pointer furniture; scrolling still works. | Never (TV shell). |
 | Edge-to-edge player | `src/tv/mods/watch-player.css` | `#watch-player`, `.embed`, `iframe` | The OSD overlays the player, so the player must own the viewport. The site's `max-height` rules are desktop limits and must be overridden. | The site provides a full-viewport watch layout. |
-| Header version line | `src/tv/mods/updates.css` | `.couch-update` | Drop-In has no app menu. A two-line build stamp in the header's secondary actions shows the running version and opens the update dialog without overlaying content. | The site offers an app/settings menu. |
+| Header version line | `src/tv/mods/updates.css` | `.dropin-update` | Drop-In has no app menu. A two-line build stamp in the header's secondary actions shows the running version and opens the update dialog without overlaying content. | The site offers an app/settings menu. |
 
 ## Player and consent
 
@@ -59,7 +59,7 @@ choice.
 (header styling), `src/tv/update.ts` (header entry, shadow-DOM dialog), and
 `src/main/updater.ts` (GitHub Releases, checksum, AppImage swap).
 
-The running version and the update entry are a `<button class="couch-update">`
+The running version and the update entry are a `<button class="dropin-update">`
 appended to the header's secondary-actions group (`.site-header` →
 `.user-actions`). It is a two-line build stamp: **Drop-In vX.Y.Z** over
 **Check for updates**. Because it is a normal button in the page, D-pad
@@ -67,7 +67,7 @@ navigation reaches it like Sign In; moving up from the content reaches the
 header. When a check finds a release, the second line becomes **Update to
 vX.Y.Z** in the site accent colour.
 
-The dialog is a shadow root on `<div data-couch="update-dialog">`, like the
+The dialog is a shadow root on `<div data-dropin="update-dialog">`, like the
 picker and OSD. While it is open, the mod consumes every action: left/right
 moves between actions, up/down scrolls the release notes when there are any,
 A activates, and B closes. Installing or restarting swallows input entirely.

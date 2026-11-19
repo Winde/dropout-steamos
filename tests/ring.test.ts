@@ -3,7 +3,7 @@ import { hideRing, setRing } from "../src/tv/ring";
 import { mockRect } from "./helpers";
 
 function ringElement(): HTMLElement {
-  const ring = document.querySelector<HTMLElement>('[data-couch="ring"]');
+  const ring = document.querySelector<HTMLElement>('[data-dropin="ring"]');
   if (!ring) throw new Error("ring was not created");
   return ring;
 }
@@ -22,7 +22,7 @@ describe("focus ring", () => {
     setRing(link);
 
     const ring = ringElement();
-    expect(ring.dataset.couch).toBe("ring");
+    expect(ring.dataset.dropin).toBe("ring");
     expect(ring.style.position).toBe("fixed");
     expect(ring.style.pointerEvents).toBe("none");
     expect(ring.style.zIndex).toBe("2147483647");
@@ -44,7 +44,7 @@ describe("focus ring", () => {
     setRing(first);
     setRing(second);
 
-    expect(document.querySelectorAll('[data-couch="ring"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-dropin="ring"]')).toHaveLength(1);
   });
 
   it("surrounds the target with a three-pixel outset", () => {

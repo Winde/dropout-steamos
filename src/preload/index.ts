@@ -3,7 +3,7 @@ import { applyEarlyMods } from "../tv/mods/runtime";
 
 function start(): void {
   void run().catch((error) => {
-    console.error("[couch] TV layer failed", error);
+    console.error("[dropin] TV layer failed", error);
   });
 }
 

@@ -19,7 +19,7 @@ import { watchLayout } from "./watch-layout";
 import type { Mod } from "./types";
 
 /**
- * The single list of everything Couch changes.
+ * The single list of everything Drop-In changes.
  *
  * One mod is one independently removable behaviour. If two behaviours can be
  * removed separately, they belong in two mods even when they share a page.

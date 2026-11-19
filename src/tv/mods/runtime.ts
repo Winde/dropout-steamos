@@ -22,10 +22,10 @@ export interface ModRuntime {
 
 function injectCss(mod: Mod): void {
   if (!mod.css) return;
-  if (document.querySelector(`style[data-couch-mod="${mod.id}"]`)) return;
+  if (document.querySelector(`style[data-dropin-mod="${mod.id}"]`)) return;
 
   const style = document.createElement("style");
-  style.dataset.couchMod = mod.id;
+  style.dataset.dropinMod = mod.id;
   style.textContent = mod.css;
   document.head.append(style);
 }

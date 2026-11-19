@@ -6,7 +6,7 @@ function ensure(): { root: ShadowRoot; pill: HTMLElement } {
   if (root && pill) return { root, pill };
 
   const host = document.createElement("div");
-  host.dataset.couch = "hint";
+  host.dataset.dropin = "hint";
   host.setAttribute("aria-live", "polite");
   host.style.cssText =
     "position:fixed;inset:0;z-index:2147483647;pointer-events:none;";

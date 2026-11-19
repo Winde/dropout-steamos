@@ -25,14 +25,14 @@ export type FocusCollector = (
 ) => Candidate<HTMLElement>[];
 
 /**
- * One self-contained change to Dropout or to the couch layer.
+ * One self-contained change to Dropout or to the TV layer.
  *
  * The array in ./index.ts is the single place where mods are registered. One
  * mod is one independently removable behaviour; if two behaviours can be
  * removed separately, they belong in two mods even when they share a page.
  *
  * A mod may contribute any combination of:
- * - css: a style tag injected as <style data-couch-mod="id">
+ * - css: a style tag injected as <style data-dropin-mod="id">
  * - early: code that runs in the preload before DOMContentLoaded
  * - setup: listeners or timers started once per page
  * - focus: choose the initial focus

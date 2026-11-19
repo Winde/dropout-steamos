@@ -9,7 +9,7 @@ import {
 import type { Mod } from "./types";
 
 /**
- * A native <select> is a button on a TV: A opens the couch picker, up/down
+ * A native <select> is a button on a TV: A opens the picker, up/down
  * moves the highlight, A confirms and B closes. Left/right are left to normal
  * spatial navigation, so the Season and Sort controls behave like any other
  * neighbours.

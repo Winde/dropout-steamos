@@ -30,12 +30,12 @@ function handleAction(action: Action): void {
 }
 
 export async function run(): Promise<void> {
-  const key = "__couchTv";
+  const key = "__dropinTv";
   if ((window as unknown as Record<string, unknown>)[key]) return;
   (window as unknown as Record<string, unknown>)[key] = true;
 
   const kind = pageKind(location.pathname);
-  document.documentElement.classList.add(`couch-${kind}`);
+  document.documentElement.classList.add(`dropin-${kind}`);
 
   runtime = startMods(kind);
   startInput({ watchMode: kind === "watch", onAction: handleAction });

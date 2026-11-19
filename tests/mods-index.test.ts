@@ -97,19 +97,19 @@ describe("mod registry", () => {
 describe("site CSS", () => {
   it("draws the focus ring without changing layout", () => {
     const css = shippedCss("focus-ring.css");
-    expect(css).toContain(".couch-focus");
+    expect(css).toContain(".dropin-focus");
     expect(css).toContain("outline");
   });
 
   it("hides the pointer while idle", () => {
     const css = shippedCss("cursor.css");
-    expect(css).toContain("couch-hide-cursor");
+    expect(css).toContain("dropin-hide-cursor");
     expect(css).toContain("cursor: none");
   });
 
   it("hides only the catalog hero carousel", () => {
     expect(shippedCss("catalog-hero.css")).toContain(
-      "html.couch-catalog .carousel",
+      "html.dropin-catalog .carousel",
     );
   });
 
@@ -121,13 +121,13 @@ describe("site CSS", () => {
 
   it("makes the watch player fill the viewport", () => {
     const css = shippedCss("watch-player.css");
-    expect(css).toContain("html.couch-watch #watch-player");
+    expect(css).toContain("html.dropin-watch #watch-player");
     expect(css).toContain("inset: 0");
   });
 
   it("styles the header version line without competing with Sign In", () => {
     const css = shippedCss("updates.css");
-    expect(css).toContain(".couch-update");
+    expect(css).toContain(".dropin-update");
     expect(css).toContain("#bebebb");
     expect(css).toContain("#feea3b");
   });

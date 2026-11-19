@@ -61,16 +61,16 @@ describe("player mod", () => {
 describe("cursor mod", () => {
   it("hides the pointer after 2.5 seconds", () => {
     cursor.setup!(context());
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       false,
     );
 
     vi.advanceTimersByTime(2499);
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       false,
     );
     vi.advanceTimersByTime(1);
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       true,
     );
   });
@@ -78,21 +78,21 @@ describe("cursor mod", () => {
   it("brings the pointer back and restarts the countdown on movement", () => {
     cursor.setup!(context());
     vi.advanceTimersByTime(2500);
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       true,
     );
 
     window.dispatchEvent(new Event("mousemove"));
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       false,
     );
 
     vi.advanceTimersByTime(2499);
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       false,
     );
     vi.advanceTimersByTime(1);
-    expect(document.documentElement.classList.contains("couch-hide-cursor")).toBe(
+    expect(document.documentElement.classList.contains("dropin-hide-cursor")).toBe(
       true,
     );
   });

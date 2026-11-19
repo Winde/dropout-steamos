@@ -66,7 +66,7 @@ describe("pinEnglish", () => {
       {
         requestHeaders: {
           "Accept-Language": "pt-BR,pt;q=0.8",
-          "User-Agent": "Couch",
+          "User-Agent": "Drop-In",
         },
       },
       callback,
@@ -75,7 +75,7 @@ describe("pinEnglish", () => {
     expect(callback).toHaveBeenCalledWith({
       requestHeaders: {
         "Accept-Language": "en-US,en;q=0.9",
-        "User-Agent": "Couch",
+        "User-Agent": "Drop-In",
       },
     });
   });

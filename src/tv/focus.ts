@@ -1,8 +1,8 @@
 import type { Box, Candidate } from "./nav";
 import { setRing } from "./ring";
 
-const FOCUS_CLASS = "couch-focus";
-const STORAGE_PREFIX = "couch:focus:";
+const FOCUS_CLASS = "dropin-focus";
+const STORAGE_PREFIX = "dropin:focus:";
 const MODAL_SELECTORS = ["#ketch-banner", "#ketch-consent-banner"];
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -37,7 +37,7 @@ export function getCurrent(): HTMLElement | null {
 }
 
 function isVisible(el: HTMLElement): boolean {
-  if (el.closest("[data-couch]")) return false;
+  if (el.closest("[data-dropin]")) return false;
   if (
     el.closest(
       ".browse-left-arrow, .browse-right-arrow, .slick-arrow, .carousel-arrow",
@@ -108,7 +108,7 @@ export function collectFocusables(): Candidate<HTMLElement>[] {
 function adoptFocus(event: FocusEvent): void {
   const el = event.target;
   if (!(el instanceof HTMLElement) || el === current) return;
-  if (el.closest("[data-couch]")) return;
+  if (el.closest("[data-dropin]")) return;
   if (!el.matches(FOCUSABLE_SELECTOR)) return;
   if (!isVisible(el)) return;
 

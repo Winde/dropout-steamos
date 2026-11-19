@@ -40,9 +40,9 @@ export function openPicker(select: HTMLSelectElement): void {
   let index = Math.min(Math.max(select.selectedIndex, 0), options.length - 1);
 
   const host = document.createElement("div");
-  host.dataset.couch = "picker";
+  host.dataset.dropin = "picker";
   host.style.setProperty(
-    "--couch-font",
+    "--dropin-font",
     getComputedStyle(document.body).fontFamily || "system-ui, sans-serif",
   );
 
@@ -78,7 +78,7 @@ export function openPicker(select: HTMLSelectElement): void {
         background: #141414;
         color: #fff;
         box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72);
-        font: 600 18px/1.35 var(--couch-font, system-ui, sans-serif);
+        font: 600 18px/1.35 var(--dropin-font, system-ui, sans-serif);
       }
       .title {
         padding: 22px 26px 10px;

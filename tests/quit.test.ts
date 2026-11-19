@@ -17,7 +17,7 @@ beforeEach(() => {
 describe("quitApp", () => {
   it("asks the main process to quit", () => {
     quitApp();
-    expect(mocks.send).toHaveBeenCalledWith("couch:quit");
+    expect(mocks.send).toHaveBeenCalledWith("dropin:quit");
   });
 
   it("sends one message per request", () => {

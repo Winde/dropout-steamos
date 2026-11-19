@@ -8,9 +8,9 @@ export const cursor: Mod = {
     const html = document.documentElement;
     let timer: ReturnType<typeof setTimeout> | null = null;
 
-    const hide = (): void => html.classList.add("couch-hide-cursor");
+    const hide = (): void => html.classList.add("dropin-hide-cursor");
     const show = (): void => {
-      html.classList.remove("couch-hide-cursor");
+      html.classList.remove("dropin-hide-cursor");
       if (timer) clearTimeout(timer);
       timer = setTimeout(hide, 2500);
     };

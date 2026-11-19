@@ -54,7 +54,7 @@ beforeEach(() => {
   mocks.setFocusRefiner.mockReset();
   mocks.mods.length = 0;
   document.body.innerHTML = "";
-  for (const style of document.querySelectorAll("style[data-couch-mod]")) {
+  for (const style of document.querySelectorAll("style[data-dropin-mod]")) {
     style.remove();
   }
   window.history.replaceState({}, "", "/browse");
@@ -120,10 +120,10 @@ describe("CSS injection", () => {
     startMods("catalog");
 
     const one = document.querySelector<HTMLStyleElement>(
-      'style[data-couch-mod="one"]',
+      'style[data-dropin-mod="one"]',
     );
     const two = document.querySelector<HTMLStyleElement>(
-      'style[data-couch-mod="two"]',
+      'style[data-dropin-mod="two"]',
     );
     expect(one?.textContent).toContain(".one");
     expect(two?.textContent).toContain(".two");
@@ -137,7 +137,7 @@ describe("CSS injection", () => {
     startMods("catalog");
 
     expect(
-      document.querySelectorAll('style[data-couch-mod="once"]'),
+      document.querySelectorAll('style[data-dropin-mod="once"]'),
     ).toHaveLength(1);
   });
 
@@ -149,7 +149,7 @@ describe("CSS injection", () => {
 
     startMods("catalog");
 
-    expect(document.querySelectorAll("style[data-couch-mod]")).toHaveLength(0);
+    expect(document.querySelectorAll("style[data-dropin-mod]")).toHaveLength(0);
   });
 
   it("injects before setup so the page already has its styles", () => {
@@ -159,7 +159,7 @@ describe("CSS injection", () => {
         css: "a { color: red; }",
         setup: () => {
           seen.push(
-            document.querySelector('style[data-couch-mod="styled"]') !== null,
+            document.querySelector('style[data-dropin-mod="styled"]') !== null,
           );
         },
       }),

@@ -23,7 +23,7 @@ function makeSelect(
 }
 
 function pickerHost(): HTMLElement {
-  const hosts = document.querySelectorAll<HTMLElement>('[data-couch="picker"]');
+  const hosts = document.querySelectorAll<HTMLElement>('[data-dropin="picker"]');
   const host = hosts[hosts.length - 1];
   if (!host) throw new Error("picker was not opened");
   return host;
@@ -55,7 +55,7 @@ async function load(): Promise<Picker> {
 
 beforeEach(() => {
   vi.resetModules();
-  for (const host of document.querySelectorAll('[data-couch="picker"]')) {
+  for (const host of document.querySelectorAll('[data-dropin="picker"]')) {
     host.remove();
   }
 });
@@ -95,7 +95,7 @@ describe("opening the picker", () => {
     picker.openPicker(select);
 
     expect(picker.isPickerOpen()).toBe(false);
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(0);
   });
 
   it("replaces an already open picker", async () => {
@@ -106,7 +106,7 @@ describe("opening the picker", () => {
     picker.openPicker(first);
     picker.openPicker(second);
 
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(1);
     expect(optionButtons().map((button) => button.textContent)).toEqual([
       "C",
       "D",
@@ -208,7 +208,7 @@ describe("moving the highlight", () => {
     picker.movePicker(1);
 
     expect(picker.isPickerOpen()).toBe(false);
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(0);
   });
 
   it("is harmless when no picker is open", async () => {
@@ -235,7 +235,7 @@ describe("confirming an option", () => {
     expect(onChange.mock.calls[0]?.[0]).toBeInstanceOf(Event);
     expect(onChange.mock.calls[0]?.[0]?.bubbles).toBe(true);
     expect(picker.isPickerOpen()).toBe(false);
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(0);
   });
 
   it("does not dispatch change when the selection did not move", async () => {
@@ -316,7 +316,7 @@ describe("closing the picker", () => {
       new MouseEvent("click", { bubbles: true }),
     );
     expect(picker.isPickerOpen()).toBe(false);
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(0);
   });
 
   it("closes on request", async () => {
@@ -326,6 +326,6 @@ describe("closing the picker", () => {
     picker.closePicker();
 
     expect(picker.isPickerOpen()).toBe(false);
-    expect(document.querySelectorAll('[data-couch="picker"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-dropin="picker"]')).toHaveLength(0);
   });
 });
