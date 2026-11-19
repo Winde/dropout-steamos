@@ -45,6 +45,7 @@ describe("mod registry", () => {
       "search-shortcut",
       "select-picker",
       "updates",
+      "watch-frame-title",
       "watch-layout",
     ]);
   });
@@ -70,6 +71,7 @@ describe("mod registry", () => {
     expect(byId("player").pages).toEqual(["watch"]);
     expect(byId("chromeless").pages).toEqual(["watch"]);
     expect(byId("watch-layout").pages).toEqual(["watch"]);
+    expect(byId("watch-frame-title").pages).toEqual(["watch"]);
     expect(byId("catalog-hero").pages).toEqual(["catalog"]);
     expect(byId("catalog-focus").pages).toEqual(["catalog"]);
     expect(byId("carousel-edge").pages).toEqual(["catalog"]);

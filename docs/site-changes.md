@@ -141,6 +141,18 @@ the element, which submits the site's magic form.
 
 - To undo: remove `loginMagicLink` from `src/tv/mods/index.ts`.
 
+### Player frame title
+
+**File:** `src/tv/mods/watch-frame-title.ts`
+
+The watch page names `iframe#watch-embed` with `title="Video Player"`.
+Chromium shows that as a native tooltip when the pointer rests over the player,
+which is noise on a TV. The mod moves the name to `aria-label` and removes
+`title`, so assistive technology still has the frame name but the tooltip does
+not appear.
+
+- To undo: remove `watchFrameTitle` from `src/tv/mods/index.ts`.
+
 ## Shell behaviours (not DOM patches)
 
 | Change | File | What it does |
@@ -155,7 +167,9 @@ the element, which submits the site's magic form.
 These selectors are observed on the live site and are the fragile part:
 
 - `#watch-player`, `#watch-embed` — watch page and player iframe.
-- `iframe#watch-embed` — the player patch targets this id only.
+- `iframe#watch-embed` — the player patch targets this id only; its `title` is
+  moved to `aria-label` so Chromium does not show a tooltip over the player
+  (see `src/tv/mods/chromeless.ts` and `src/tv/mods/watch-frame-title.ts`).
 - `#watch-info` — hidden by the edge-to-edge layout; not removed from the DOM.
 - `#ketch-banner`, `#ketch-banner-button-tertiary` — consent banner.
 - `.carousel` — catalog hero.

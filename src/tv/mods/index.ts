@@ -19,6 +19,7 @@ import { searchFocus } from "./search-focus";
 import { searchShortcut } from "./search-shortcut";
 import { selectPicker } from "./select-picker";
 import { updates } from "./updates";
+import { watchFrameTitle } from "./watch-frame-title";
 import { watchLayout } from "./watch-layout";
 import type { Mod } from "./types";
 
@@ -70,4 +71,5 @@ export const MODS: Mod[] = [
   catalogHero,
   scrollbars,
   watchLayout,
+  watchFrameTitle,
 ];
