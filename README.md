@@ -66,6 +66,14 @@ If Electron reports a `chrome-sandbox` permission error on Linux, run `npm start
 
 Requires Node 22+ and a Dropout account.
 
+## Commits
+
+Releases are written from commit messages: a commit body becomes a section of
+the next release's notes, and a subject without a body becomes one line. Write
+what changed for the person using the app; keep repository-only work under
+`test:`, `ci:` or `chore:` so it stays out. See
+[docs/releasing.md](docs/releasing.md).
+
 ## Modifications
 
 Every change to Dropout is a **mod** in `src/tv/mods/`. The single registry is
