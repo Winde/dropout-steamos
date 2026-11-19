@@ -204,7 +204,15 @@ function scrollHorizontally(el: HTMLElement): void {
   step();
 }
 
-export function focusElement(el: HTMLElement): void {
+export interface FocusOptions {
+  /** Skip the scroll nudges; the page is already moving the element. */
+  scroll?: boolean;
+}
+
+export function focusElement(
+  el: HTMLElement,
+  options: FocusOptions = {},
+): void {
   if (current && current !== el) current.classList.remove(FOCUS_CLASS);
 
   current = el;
@@ -213,6 +221,7 @@ export function focusElement(el: HTMLElement): void {
   setRing(el);
 
   storeFocus(el);
+  if (options.scroll === false) return;
   scrollVertically(el);
   scrollHorizontally(el);
 }

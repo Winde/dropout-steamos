@@ -320,6 +320,29 @@ describe("focusElement", () => {
     expect(() => focusElement(link)).not.toThrow();
     expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
   });
+
+  it("can skip the scroll nudges when the page is already moving the card", () => {
+    const row = document.createElement("div");
+    row.className = "browse-row";
+    document.body.append(row);
+    mockRect(row, 0, 100, 500, 200);
+
+    const arrow = document.createElement("button");
+    arrow.className = "browse-right-arrow";
+    row.append(arrow);
+    const click = vi.fn();
+    arrow.addEventListener("click", click);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", "/off-row");
+    row.append(link);
+    mockRect(link, 600, 120, 100, 60);
+
+    focusElement(link, { scroll: false });
+
+    expect(click).not.toHaveBeenCalled();
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+  });
 });
 
 describe("restoreFocus", () => {

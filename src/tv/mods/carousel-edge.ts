@@ -1,11 +1,10 @@
-import type { Mod } from "./types";
+import { collectFocusables, focusElement } from "../focus";
+import { best, type Direction } from "../nav";
+import type { Mod, ModContext } from "./types";
 
-/** Slick's slide animation runs for 500 ms. */
-const SLIDE_MS = 600;
 const ADVANCING = "data-dropin-carousel-advancing";
-
-/** Guards the synthetic navigate from claiming the same edge again. */
-let settling = false;
+const POLL_MS = 50;
+const SETTLE_ATTEMPTS = 24;
 
 function arrowFor(
   row: HTMLElement,
@@ -17,12 +16,65 @@ function arrowFor(
 }
 
 /**
+ * Wait for slick to put the revealed card fully inside the row, then focus it
+ * without asking the carousel for another nudge. A fixed delay was too early
+ * for the taller Trending row and clicked its arrow a second time.
+ */
+function settle(
+  direction: Direction,
+  row: HTMLElement,
+  ctx: ModContext,
+): void {
+  let attempts = SETTLE_ATTEMPTS;
+
+  const done = (): void => row.removeAttribute(ADVANCING);
+
+  const tick = (): void => {
+    const current = ctx.current();
+    if (!current || !row.contains(current)) {
+      done();
+      return;
+    }
+
+    const rowRect = row.getBoundingClientRect();
+    const candidates = collectFocusables().filter(
+      (candidate) =>
+        candidate.el !== current &&
+        row.contains(candidate.el) &&
+        candidate.el.closest(".browse-item-card"),
+    );
+    const target = best(
+      current.getBoundingClientRect(),
+      candidates,
+      direction,
+    );
+
+    if (target) {
+      const rect = target.getBoundingClientRect();
+      if (rect.left >= rowRect.left - 1 && rect.right <= rowRect.right + 1) {
+        focusElement(target, { scroll: false });
+        done();
+        return;
+      }
+    }
+
+    if (attempts-- <= 0) {
+      done();
+      return;
+    }
+    setTimeout(tick, POLL_MS);
+  };
+
+  setTimeout(tick, POLL_MS);
+}
+
+/**
  * Site change: page a carousel from its visible edge.
  *
  * Slick marks every slide outside the current window `aria-hidden`, so the
  * focus collector has no card past the last visible one. A left/right press at
  * the edge of a row used to do nothing. The mod clicks the site's own arrow,
- * then moves focus to the card that the slide reveals.
+ * then focuses the revealed card once it has settled.
  *
  * The left arrow is ignored until the site has shown it (`arrow-enter`):
  * before the first advance it only loops to the end of the row.
@@ -30,9 +82,13 @@ function arrowFor(
 export const carouselEdge: Mod = {
   id: "carousel-edge",
   pages: ["catalog"],
+  action(action, ctx) {
+    if (action !== "left" && action !== "right") return false;
+    const row = ctx.current()?.closest<HTMLElement>(".browse-row");
+    return !!row?.hasAttribute(ADVANCING);
+  },
   edge(direction, ctx) {
     if (direction !== "left" && direction !== "right") return false;
-    if (settling) return true;
 
     const current = ctx.current();
     if (!current?.closest(".browse-item-card")) return false;
@@ -48,20 +104,7 @@ export const carouselEdge: Mod = {
 
     row.setAttribute(ADVANCING, "");
     arrow.click();
-
-    setTimeout(() => {
-      row.removeAttribute(ADVANCING);
-
-      const focused = ctx.current();
-      if (!focused || !row.contains(focused)) return;
-
-      settling = true;
-      try {
-        ctx.navigate(direction);
-      } finally {
-        settling = false;
-      }
-    }, SLIDE_MS);
+    settle(direction, row, ctx);
 
     return true;
   },
