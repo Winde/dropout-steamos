@@ -109,14 +109,13 @@ Extras: **X** toggles subtitles, **L3** mutes. When the player controls are open
 
 ## Releases
 
-Releases are started by hand, not by pushing a tag: tag the commit, create the
-release in the GitHub UI, then run the Release workflow from that tagged commit.
-It reads the version from the tag, builds the Linux AppImage and checksums, and
-attaches them to that release, along with `install.sh` and `steam-art.zip`. A
-missing or mismatched release fails before the build, and a failed build uploads
-nothing. The workflow can also be run with `dry_run` on any commit to build and
-test everything without touching the release. See
-[docs/releasing.md](docs/releasing.md) for versioning rules and the checklist.
+A release is a tag. Pushing a `vMAJOR.MINOR.PATCH` tag builds and tests the
+commit, writes the notes from the commits since the previous release, and
+publishes a release named after the tag with the AppImage, `install.sh`,
+`steam-art.zip` and `SHA256SUMS.txt`. Nothing is created by hand. The workflow
+can also be run with `dry_run` on any commit to build and test everything
+without touching a release. See [docs/releasing.md](docs/releasing.md) for the
+notes rules, versioning and the checklist.
 
 ## Credits
 

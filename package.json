@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "verify": "npm run typecheck && npm test",
+    "notes": "node scripts/release-notes.mjs",
     "build:linux": "npm run build && electron-builder --linux"
   },
   "devDependencies": {
