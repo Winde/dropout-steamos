@@ -35,6 +35,7 @@ describe("mod registry", () => {
       "cursor",
       "focus-ring",
       "home-back",
+      "infinite-scroll",
       "login-back",
       "login-focus",
       "login-magic-link",
@@ -77,6 +78,7 @@ describe("mod registry", () => {
     expect(byId("carousel-edge").pages).toEqual(["catalog"]);
     expect(byId("row-title-focus").pages).toEqual(["catalog"]);
     expect(byId("card-tooltips").pages).toEqual(["catalog"]);
+    expect(byId("infinite-scroll").pages).toEqual(["catalog"]);
     expect(byId("search-focus").pages).toEqual(["catalog"]);
     expect(byId("login-focus").pages).toEqual(["login"]);
     expect(byId("login-magic-link").pages).toEqual(["login"]);

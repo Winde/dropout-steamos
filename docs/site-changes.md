@@ -126,6 +126,23 @@ catalog pages.
 
 - To undo: remove `cardTooltips` from `src/tv/mods/index.ts`.
 
+### Infinite scroll
+
+**File:** `src/tv/mods/infinite-scroll.ts`
+
+The catalog's next page loads from a `.see-more-row` button when it reaches the
+viewport. While that page is in flight there is no card below the current row,
+so spatial navigation used to fall through to the footer links and leave focus
+far down the page. The **Show more** button is removed from the D-pad. A down
+press with no focusable card below is claimed before spatial navigation: it
+clicks the button without focusing it, keeps focus on the row while the page and
+its cards arrive, then moves into the first new card. Down presses during the
+wait are swallowed; another direction cancels the pending move. Once the
+see-more row is exhausted, the mod declines the press and the footer can be
+reached normally.
+
+- To undo: remove `infiniteScroll` from `src/tv/mods/index.ts`.
+
 ## Login
 
 ### Passwordless sign-in link
@@ -178,6 +195,10 @@ These selectors are observed on the live site and are the fragile part:
   `src/tv/mods/login-back.ts` and `src/tv/focus.ts`).
 - `.tooltip` — card hover info hidden on catalog pages (see
   `src/tv/mods/card-tooltips.ts`).
+- `.see-more-row` — next-page button removed from the D-pad; a down press with
+  no focusable card below drives it instead (see
+  `src/tv/mods/infinite-scroll.ts`). Footer links stay focusable and become
+  reachable once the catalog is exhausted.
 - `.browse-item-card` — one D-pad stop per card (see `src/tv/mods/card-focus.ts`).
 - `.browse-row`, `.browse-left-arrow`, `.browse-right-arrow` — a row's cards and
   the arrows its edge press clicks (see `src/tv/mods/carousel-edge.ts`).

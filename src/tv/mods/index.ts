@@ -9,6 +9,7 @@ import { cookieReject } from "./cookie-reject";
 import { cursor } from "./cursor";
 import { focusRing } from "./focus-ring";
 import { homeBack } from "./home-back";
+import { infiniteScroll } from "./infinite-scroll";
 import { loginBack } from "./login-back";
 import { loginFocus } from "./login-focus";
 import { loginMagicLink } from "./login-magic-link";
@@ -61,6 +62,7 @@ export const MODS: Mod[] = [
   cardFocus,
   rowTitleFocus,
   carouselEdge,
+  infiniteScroll,
   catalogFocus,
   searchFocus,
 
