@@ -1,10 +1,9 @@
-import { collectFocusables, focusElement } from "../focus";
-import { best, type Direction } from "../nav";
+import { focusElement } from "../focus";
 import type { Mod, ModContext } from "./types";
 
+/** Slick's slide animation runs for 500 ms. */
+const SLIDE_MS = 600;
 const ADVANCING = "data-dropin-carousel-advancing";
-const POLL_MS = 50;
-const SETTLE_ATTEMPTS = 24;
 
 function arrowFor(
   row: HTMLElement,
@@ -16,56 +15,65 @@ function arrowFor(
 }
 
 /**
- * Wait for slick to put the revealed card fully inside the row, then focus it
- * without asking the carousel for another nudge. A fixed delay was too early
- * for the taller Trending row and clicked its arrow a second time.
+ * The card one slide over from the focused one. Focusing it before the slide
+ * starts keeps the ring on the incoming card instead of leaving it on the card
+ * that is about to move off-screen.
  */
-function settle(
-  direction: Direction,
+function nextCard(
+  current: HTMLElement,
+  direction: "left" | "right",
+): HTMLElement | null {
+  const slide = current.closest<HTMLElement>(".slick-slide");
+  const row = current.closest<HTMLElement>(".browse-row");
+  if (!slide || !row) return null;
+
+  const slides = [...row.querySelectorAll<HTMLElement>(".slick-slide")];
+  const index = slides.indexOf(slide);
+  if (index < 0) return null;
+
+  const offset = direction === "right" ? 1 : -1;
+  const target = slides[(index + offset + slides.length) % slides.length];
+  return target?.querySelector<HTMLElement>(".browse-item-card a[href]") ?? null;
+}
+
+/**
+ * Infinite rows page through clones and then reset to the real slides. The
+ * card focused at the start of the slide can therefore end up off-screen or
+ * hidden. After the slide, keep focus only if the card is really visible; for
+ * a wrapped clone, move to the visible slide with the same destination.
+ */
+function settleFocus(
   row: HTMLElement,
+  target: HTMLElement,
   ctx: ModContext,
-): void {
-  let attempts = SETTLE_ATTEMPTS;
+): boolean {
+  const focused = ctx.current();
+  if (focused && focused !== target) return true;
 
-  const done = (): void => row.removeAttribute(ADVANCING);
+  const rowRect = row.getBoundingClientRect();
+  const rect = target.getBoundingClientRect();
+  const visible =
+    !target.closest('[aria-hidden="true"]') &&
+    rect.left >= rowRect.left - 1 &&
+    rect.right <= rowRect.right + 1;
+  if (visible) return true;
 
-  const tick = (): void => {
-    const current = ctx.current();
-    if (!current || !row.contains(current)) {
-      done();
-      return;
-    }
-
-    const rowRect = row.getBoundingClientRect();
-    const candidates = collectFocusables().filter(
-      (candidate) =>
-        candidate.el !== current &&
-        row.contains(candidate.el) &&
-        candidate.el.closest(".browse-item-card"),
+  const href = target.getAttribute("href");
+  if (!href) return false;
+  const replacement = [
+    ...row.querySelectorAll<HTMLElement>(".browse-item-card a[href]"),
+  ].find((card) => {
+    if (card === target || card.getAttribute("href") !== href) return false;
+    if (card.closest('[aria-hidden="true"]')) return false;
+    const cardRect = card.getBoundingClientRect();
+    return (
+      cardRect.left >= rowRect.left - 1 && cardRect.right <= rowRect.right + 1
     );
-    const target = best(
-      current.getBoundingClientRect(),
-      candidates,
-      direction,
-    );
+  });
+  if (!replacement) return false;
 
-    if (target) {
-      const rect = target.getBoundingClientRect();
-      if (rect.left >= rowRect.left - 1 && rect.right <= rowRect.right + 1) {
-        focusElement(target, { scroll: false });
-        done();
-        return;
-      }
-    }
-
-    if (attempts-- <= 0) {
-      done();
-      return;
-    }
-    setTimeout(tick, POLL_MS);
-  };
-
-  setTimeout(tick, POLL_MS);
+  focusElement(replacement, { scroll: false });
+  return true;
 }
 
 /**
@@ -74,16 +82,24 @@ function settle(
  * Slick marks every slide outside the current window `aria-hidden`, so the
  * focus collector has no card past the last visible one. A left/right press at
  * the edge of a row used to do nothing. The mod clicks the site's own arrow,
- * then focuses the revealed card once it has settled.
- *
- * The left arrow is ignored until the site has shown it (`arrow-enter`):
- * before the first advance it only loops to the end of the row.
+ * focuses the card that the slide is bringing in, and ignores directions (and
+ * A) until the slide has finished, so repeated presses cannot land focus on a
+ * half-visible card. Left at the first slide pages back to the end of the row.
  */
 export const carouselEdge: Mod = {
   id: "carousel-edge",
   pages: ["catalog"],
   action(action, ctx) {
-    if (action !== "left" && action !== "right") return false;
+    if (
+      action !== "up" &&
+      action !== "down" &&
+      action !== "left" &&
+      action !== "right" &&
+      action !== "select"
+    ) {
+      return false;
+    }
+
     const row = ctx.current()?.closest<HTMLElement>(".browse-row");
     return !!row?.hasAttribute(ADVANCING);
   },
@@ -98,14 +114,23 @@ export const carouselEdge: Mod = {
 
     const arrow = arrowFor(row, direction);
     if (!arrow || arrow.classList.contains("slick-disabled")) return false;
-    if (direction === "left" && !arrow.classList.contains("arrow-enter")) {
-      return false;
-    }
+
+    const target = nextCard(current, direction);
+    if (!target) return false;
 
     row.setAttribute(ADVANCING, "");
+    focusElement(target, { scroll: false });
     arrow.click();
-    settle(direction, row, ctx);
 
+    let attempts = 0;
+    const finish = (): void => {
+      if (!settleFocus(row, target, ctx) && attempts++ < 5) {
+        setTimeout(finish, 100);
+        return;
+      }
+      row.removeAttribute(ADVANCING);
+    };
+    setTimeout(finish, SLIDE_MS);
     return true;
   },
 };

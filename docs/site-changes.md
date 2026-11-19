@@ -90,11 +90,14 @@ Release assets must keep the electron-builder name
 Slick marks every slide outside the current window `aria-hidden`, so the focus
 collector sees no card past the last visible one and a left/right press at a
 row's edge did nothing. The mod claims that edge press, clicks the site's own
-`.browse-right-arrow` or `.browse-left-arrow`, and focuses the revealed card
-once it is fully inside the row. Focusing it without the usual scroll nudge
-keeps slick from paging a second time; the taller Trending row exposed that.
-The hidden left arrow (`arrow-enter` absent) and `slick-disabled` arrows are
-left alone, and left/right presses are swallowed while the slide settles.
+`.browse-right-arrow` or `.browse-left-arrow`, and moves focus to the card one
+slide over before the carousel starts moving. The ring therefore rides the
+incoming card instead of being left behind. Directions and A are ignored until
+the 500 ms slide ends, so repeated presses cannot land on a half-visible card.
+Left at the first slide pages back to the end of the row; `slick-disabled`
+arrows are still left alone. When an infinite row resets from its clones, focus
+moves to the visible card with the same destination instead of staying on the
+off-screen clone.
 
 - To undo: remove `carouselEdge` from `src/tv/mods/index.ts`.
 
