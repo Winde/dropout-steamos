@@ -114,6 +114,18 @@ paging.
 
 - To undo: remove `rowTitleFocus` from `src/tv/mods/index.ts`.
 
+### Card hover info
+
+**Files:** `src/tv/mods/card-tooltips.ts`,
+`src/tv/mods/card-tooltips.css`
+
+Browse cards and collection episodes carry a `.tooltip` (browse cards also
+`[data-testid="browse-tooltip"]`) that the site positions on hover. A TV has no
+pointer, and the popup can cover a row, so the stylesheet hides every tooltip on
+catalog pages.
+
+- To undo: remove `cardTooltips` from `src/tv/mods/index.ts`.
+
 ## Login
 
 ### Passwordless sign-in link
@@ -150,6 +162,8 @@ These selectors are observed on the live site and are the fragile part:
 - `#signin-email-input`, `#signin-password-input`, `#signin-magic-submit` — login
   (see `src/tv/mods/login-focus.ts`, `src/tv/mods/login-magic-link.ts`,
   `src/tv/mods/login-back.ts` and `src/tv/focus.ts`).
+- `.tooltip` — card hover info hidden on catalog pages (see
+  `src/tv/mods/card-tooltips.ts`).
 - `.browse-item-card` — one D-pad stop per card (see `src/tv/mods/card-focus.ts`).
 - `.browse-row`, `.browse-left-arrow`, `.browse-right-arrow` — a row's cards and
   the arrows its edge press clicks (see `src/tv/mods/carousel-edge.ts`).

@@ -1,4 +1,5 @@
 import { cardFocus } from "./card-focus";
+import { cardTooltips } from "./card-tooltips";
 import { carouselEdge } from "./carousel-edge";
 import { catalogFocus } from "./catalog-focus";
 import { catalogHero } from "./catalog-hero";
@@ -65,6 +66,7 @@ export const MODS: Mod[] = [
   // Visual decorations.
   focusRing,
   cursor,
+  cardTooltips,
   catalogHero,
   scrollbars,
   watchLayout,

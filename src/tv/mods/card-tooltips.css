@@ -1,0 +1,10 @@
+/*
+ * Site change: card hover info.
+ * Browse and collection cards carry a .tooltip that the site positions on
+ * hover. The TV layer has no pointer; the info duplicates the card and can pop
+ * up over a row, so hide it everywhere on catalog pages.
+ */
+.tooltip,
+[data-testid="browse-tooltip"] {
+  display: none !important;
+}

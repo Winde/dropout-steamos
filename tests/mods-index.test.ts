@@ -25,6 +25,7 @@ describe("mod registry", () => {
   it("registers every modification", () => {
     expect([...ids].sort()).toEqual([
       "card-focus",
+      "card-tooltips",
       "carousel-edge",
       "catalog-focus",
       "catalog-hero",
@@ -73,6 +74,7 @@ describe("mod registry", () => {
     expect(byId("catalog-focus").pages).toEqual(["catalog"]);
     expect(byId("carousel-edge").pages).toEqual(["catalog"]);
     expect(byId("row-title-focus").pages).toEqual(["catalog"]);
+    expect(byId("card-tooltips").pages).toEqual(["catalog"]);
     expect(byId("search-focus").pages).toEqual(["catalog"]);
     expect(byId("login-focus").pages).toEqual(["login"]);
     expect(byId("login-magic-link").pages).toEqual(["login"]);
@@ -89,6 +91,7 @@ describe("mod registry", () => {
       "focus-ring",
       "cursor",
       "catalog-hero",
+      "card-tooltips",
       "scrollbars",
       "watch-layout",
       "updates",
@@ -142,6 +145,13 @@ describe("site CSS", () => {
   it("hides the View all row action", () => {
     const css = shippedCss("row-title-focus.css");
     expect(css).toContain(".horizontal-row-header.view-more-container");
+    expect(css).toContain("display: none");
+  });
+
+  it("hides card hover tooltips", () => {
+    const css = shippedCss("card-tooltips.css");
+    expect(css).toContain(".tooltip");
+    expect(css).toContain('[data-testid="browse-tooltip"]');
     expect(css).toContain("display: none");
   });
 });
