@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
+import { IPC } from "../shared/ipc";
 
 export function quitApp(): void {
-  ipcRenderer.send("dropin:quit");
+  ipcRenderer.send(IPC.quit);
 }

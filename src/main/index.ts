@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, net, session, shell } from "electron";
 import type { IpcMainInvokeEvent } from "electron";
 import fs from "node:fs";
 import path from "node:path";
+import { IPC } from "../shared/ipc";
 import { useSimpleInputMethod } from "./linux-env";
 import { pinEnglish } from "./locale";
 import {
@@ -182,26 +183,26 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   void app.whenReady().then(async () => {
-    ipcMain.on("dropin:quit", () => app.quit());
+    ipcMain.on(IPC.quit, () => app.quit());
 
-    ipcMain.handle("dropin:version", (event) => {
+    ipcMain.handle(IPC.version, (event) => {
       assertTrusted(event);
       return app.getVersion();
     });
 
     // GitHub Releases is the update channel. The renderer never handles the
     // download: it asks, shows state, and the main process swaps the AppImage.
-    ipcMain.handle("dropin:update-check", (event) => {
+    ipcMain.handle(IPC.updateCheck, (event) => {
       assertTrusted(event);
       return updater.check();
     });
 
-    ipcMain.handle("dropin:update-notes", (event) => {
+    ipcMain.handle(IPC.updateNotes, (event) => {
       assertTrusted(event);
       return updater.notes();
     });
 
-    ipcMain.handle("dropin:update-install", async (event) => {
+    ipcMain.handle(IPC.updateInstall, async (event) => {
       assertTrusted(event);
       const appImage = await updater.install();
       // An AppImage runs an inner binary from its own read-only mount, so
@@ -215,7 +216,7 @@ if (!app.requestSingleInstanceLock()) {
       app.quit();
     });
 
-    ipcMain.on("dropin:update-page", (event) => {
+    ipcMain.on(IPC.updatePage, (event) => {
       if (event.sender !== win?.webContents) return;
       void shell.openExternal(RELEASES_PAGE);
     });

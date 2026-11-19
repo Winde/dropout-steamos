@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import { IPC } from "../shared/ipc";
 import type { UpdateInfo, ReleaseNote } from "../shared/update";
 import type { Action } from "./input";
 import { hideRing } from "./ring";
@@ -114,7 +115,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     watchForHeader();
 
     void ipcRenderer
-      .invoke("dropin:version")
+      .invoke(IPC.version)
       .then((value: string) => {
         version = String(value ?? "");
         renderEntry();
@@ -431,7 +432,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
 
     const seq = ++checkSeq;
     void ipcRenderer
-      .invoke("dropin:update-check")
+      .invoke(IPC.updateCheck)
       .then((info: UpdateInfo) => {
         if (seq !== checkSeq) return;
         known = info.available ? info : null;
@@ -470,7 +471,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     renderDialog();
 
     void ipcRenderer
-      .invoke("dropin:update-notes")
+      .invoke(IPC.updateNotes)
       .then((releases: ReleaseNote[]) => {
         if (seq !== notesSeq) return;
         notes = Array.isArray(releases) ? releases : [];
@@ -490,7 +491,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     setPrompt({ name: "installing", latest });
 
     void ipcRenderer
-      .invoke("dropin:update-install")
+      .invoke(IPC.updateInstall)
       .then(() => {
         if (!dialog) return;
         setPrompt({ name: "restarting", latest });
@@ -561,7 +562,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
               label: "Open releases",
               primary: true,
               run: () => {
-                ipcRenderer.send("dropin:update-page");
+                ipcRenderer.send(IPC.updatePage);
                 dismiss();
               },
             },
