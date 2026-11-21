@@ -210,6 +210,7 @@ describe("update dialog", () => {
     expect(entry.style.visibility).toBe("hidden");
     expect(title()).toBe("Drop-In v0.2.0 is available");
     expect(message()).toContain("You have v0.1.0");
+    expect(message()).toContain("then closes");
     expect(dialog()?.textContent).toContain("Player changes.");
     expect(actionLabels()).toEqual(["Later", "Update now"]);
     expect(activeAction()).toBe("Later");
@@ -271,6 +272,7 @@ describe("update dialog", () => {
     expect(mocks.invoke).toHaveBeenCalledWith("dropin:update-install");
     expect(title()).toBe("Updating Drop-In");
     expect(message()).toContain("Downloading Drop-In v0.2.0");
+    expect(message()).toContain("will close when it's done");
     expect(actionLabels()).toEqual([]);
     expect(ui.action("back")).toBe(true);
     expect(dialog()).not.toBeNull();
@@ -278,7 +280,9 @@ describe("update dialog", () => {
     finish();
     await flush();
 
-    expect(message()).toContain("installed. Restarting");
+    expect(title()).toBe("Update installed");
+    expect(message()).toContain("Closing Drop-In");
+    expect(message()).toContain("open it again from Steam");
     expect(ui.action("back")).toBe(true);
     expect(dialog()).not.toBeNull();
   });

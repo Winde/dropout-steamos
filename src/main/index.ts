@@ -18,6 +18,9 @@ useSimpleInputMethod(process.env);
 
 const START_URL = "https://watch.dropout.tv/browse";
 
+/** How long the closing overlay stays up before the window goes. */
+export const CLOSING_OVERLAY_MS = 2000;
+
 const isSteam =
   process.env.SteamOS === "1" && process.env.SteamGamepadUI === "1";
 const wantsFullscreen = isSteam || process.argv.includes("--fullscreen");
@@ -213,7 +216,9 @@ if (!app.requestSingleInstanceLock()) {
         execPath: appImage,
         args: relaunchArgs(process.argv.slice(1)),
       });
-      app.quit();
+      // The TV layer switches to its closing state as soon as this call
+      // returns. Hold the window long enough to read it, then quit as before.
+      setTimeout(() => app.quit(), CLOSING_OVERLAY_MS);
     });
 
     ipcMain.on(IPC.updatePage, (event) => {

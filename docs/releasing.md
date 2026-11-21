@@ -156,8 +156,10 @@ Drop-In updates itself from GitHub Releases. The header's **Drop-In vX.Y.Z /
 Check for updates** stamp, or **Y** outside the player, compares the running
 `app.getVersion()` with the latest stable release; **Update now** downloads
 `Drop-In-<version>-x86_64.AppImage`, verifies it against that release's
-`SHA256SUMS.txt`, renames it over the running AppImage, and relaunches. This is
-why every release must keep that asset name and publish `SHA256SUMS.txt`.
+`SHA256SUMS.txt`, renames it over the running AppImage, and closes. It asks
+Electron to relaunch, but SteamOS Game Mode ends the session on quit, so the
+dialog tells the viewer to open Drop-In again from Steam. This is why every
+release must keep that asset name and publish `SHA256SUMS.txt`.
 Builds from before the updater have to be replaced once with the installer.
 
 The installer is the fallback: re-run it for a first install, a machine without

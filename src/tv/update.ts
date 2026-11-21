@@ -25,7 +25,7 @@ export type UpdatePrompt =
       canInstall: boolean;
     }
   | { name: "installing"; latest: string }
-  | { name: "restarting"; latest: string }
+  | { name: "closing"; latest: string }
   | { name: "failed"; stage: "check" | "install"; reason: string };
 
 export interface UpdateFocus {
@@ -494,7 +494,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
       .invoke(IPC.updateInstall)
       .then(() => {
         if (!dialog) return;
-        setPrompt({ name: "restarting", latest });
+        setPrompt({ name: "closing", latest });
       })
       .catch((error: unknown) => {
         if (!dialog) return;
@@ -518,7 +518,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
 
   function dismiss(): void {
     if (!dialogHost) return;
-    if (prompt?.name === "installing" || prompt?.name === "restarting") return;
+    if (prompt?.name === "installing" || prompt?.name === "closing") return;
 
     dialogHost.remove();
     dialogHost = null;
@@ -550,7 +550,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     switch (prompt.name) {
       case "checking":
       case "installing":
-      case "restarting":
+      case "closing":
         return [];
       case "current":
         return [{ label: "Close", primary: true, run: dismiss }];
@@ -583,8 +583,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
   function renderDialog(): void {
     if (!dialog || !prompt) return;
 
-    const hardBusy =
-      prompt.name === "installing" || prompt.name === "restarting";
+    const hardBusy = prompt.name === "installing" || prompt.name === "closing";
 
     dialog.eyebrow.textContent = version ? `Drop-In v${version}` : "Drop-In";
 
@@ -602,16 +601,16 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
       case "available":
         title = `Drop-In v${prompt.latest} is available`;
         message = prompt.canInstall
-          ? `You have v${prompt.current}. Drop-In downloads the update, checks it against the release's SHA-256, then restarts.`
+          ? `You have v${prompt.current}. Drop-In downloads the update, checks it against the release's SHA-256, then closes. Open it again from Steam to finish.`
           : `You have v${prompt.current}. This copy can't replace itself: download the new version from the Drop-In releases page on GitHub.`;
         break;
       case "installing":
         title = "Updating Drop-In";
-        message = `Downloading Drop-In v${prompt.latest}\u2026`;
+        message = `Downloading Drop-In v${prompt.latest}\u2026 Drop-In will close when it's done.`;
         break;
-      case "restarting":
-        title = "Updating Drop-In";
-        message = `Drop-In v${prompt.latest} is installed. Restarting\u2026`;
+      case "closing":
+        title = "Update installed";
+        message = `Drop-In v${prompt.latest} is installed. Closing Drop-In \u2014 open it again from Steam.`;
         break;
       case "failed":
         title =
@@ -628,7 +627,7 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
     dialog.spinner.hidden =
       prompt.name !== "checking" &&
       prompt.name !== "installing" &&
-      prompt.name !== "restarting";
+      prompt.name !== "closing";
 
     const showNotes =
       prompt.name === "available" &&
@@ -725,8 +724,8 @@ export function createUpdateUi(focus: UpdateFocus): UpdateUi {
   function handleDialogAction(action: Action): void {
     if (!prompt) return;
 
-    if (prompt.name === "installing" || prompt.name === "restarting") {
-      // The download is already under way; leaving would restart under the
+    if (prompt.name === "installing" || prompt.name === "closing") {
+      // The download is already under way; leaving would close under the
       // viewer once it finishes.
       return;
     }

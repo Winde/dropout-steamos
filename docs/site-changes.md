@@ -70,7 +70,9 @@ vX.Y.Z** in the site accent colour.
 The dialog is a shadow root on `<div data-dropin="update-dialog">`, like the
 picker and OSD. While it is open, the mod consumes every action: left/right
 moves between actions, up/down scrolls the release notes when there are any,
-A activates, and B closes. Installing or restarting swallows input entirely.
+A activates, and B closes. Installing and closing swallow input entirely; the
+closing state says Drop-In is about to close and asks the viewer to open it
+again from Steam.
 
 Outside the player, **Y** (menu) opens the same dialog from any page, which is
 the fast path when the D-pad is deep in a long catalog. On watch pages the mod

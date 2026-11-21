@@ -1,3 +1,7 @@
+import { createHash } from "node:crypto";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -138,10 +142,11 @@ async function flush(): Promise<void> {
   for (let i = 0; i < 6; i++) await Promise.resolve();
 }
 
-async function loadMain(): Promise<void> {
+async function loadMain(): Promise<typeof import("../src/main/index")> {
   vi.resetModules();
-  await import("../src/main/index");
+  const main = await import("../src/main/index");
   await flush();
+  return main;
 }
 
 function win(): FakeWindow {
@@ -401,6 +406,75 @@ describe("updates", () => {
         }),
       }),
     );
+  });
+
+  it("holds the closing overlay before quitting and relaunching", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "dropin-update-"));
+    const target = join(directory, "Drop-In.AppImage");
+    writeFileSync(target, "old build");
+    const bytes = Buffer.from("new build");
+    const hash = createHash("sha256").update(bytes).digest("hex");
+    const previousAppImage = process.env.APPIMAGE;
+    process.env.APPIMAGE = target;
+    try {
+      mocks.net.fetch.mockImplementation((url: string) => {
+        if (url.startsWith("https://api.github.com/")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => release("0.2.0"),
+            text: async () => "",
+            body: null,
+          });
+        }
+        if (url.endsWith("SHA256SUMS.txt")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => null,
+            text: async () => `${hash}  Drop-In-0.2.0-x86_64.AppImage\n`,
+            body: null,
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => null,
+          text: async () => "",
+          body: new ReadableStream({
+            start(controller) {
+              controller.enqueue(bytes);
+              controller.close();
+            },
+          }),
+        });
+      });
+
+      const main = await loadMain();
+      await ipcHandler("dropin:update-check")(trusted());
+
+      vi.useFakeTimers();
+      try {
+        await ipcHandler("dropin:update-install")(trusted());
+
+        expect(mocks.app.relaunch).toHaveBeenCalledWith({
+          execPath: target,
+          args: process.argv.slice(1),
+        });
+        // The TV layer switches to its closing state as soon as install
+        // resolves; the window stays up long enough to read it.
+        expect(mocks.app.quit).not.toHaveBeenCalled();
+
+        vi.advanceTimersByTime(main.CLOSING_OVERLAY_MS);
+        expect(mocks.app.quit).toHaveBeenCalledOnce();
+      } finally {
+        vi.useRealTimers();
+      }
+    } finally {
+      if (previousAppImage === undefined) delete process.env.APPIMAGE;
+      else process.env.APPIMAGE = previousAppImage;
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   it("opens the releases page in the system browser", async () => {

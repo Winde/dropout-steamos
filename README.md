@@ -40,8 +40,9 @@ choose it for you. The app reads a standard gamepad.
 Drop-In updates itself from inside the app. The storefront header carries a
 **Drop-In vX.Y.Z / Check for updates** stamp; **Y** on a controller opens the
 same dialog from anywhere outside the player. **Update now** downloads the
-release, checks it against `SHA256SUMS.txt`, and restarts into it. Nothing
-installs on its own. A build from before this feature has no updater, so
+release, checks it against `SHA256SUMS.txt`, and closes. Open Drop-In again
+from Steam to use the new version; Game Mode ends the app's session on quit, so
+the app does not come back by itself. Nothing installs on its own. A build from before this feature has no updater, so
 upgrade it once with the installer; after that the app keeps itself current.
 
 The installer remains the fallback: re-run it for a first install, a machine
