@@ -19,6 +19,7 @@ import { scrollbars } from "./scrollbars";
 import { searchFocus } from "./search-focus";
 import { searchShortcut } from "./search-shortcut";
 import { selectPicker } from "./select-picker";
+import { startupSkeleton } from "./startup-skeleton";
 import { updates } from "./updates";
 import { watchFrameTitle } from "./watch-frame-title";
 import { watchLayout } from "./watch-layout";
@@ -41,7 +42,8 @@ import type { Mod } from "./types";
  * array. To remove one: delete its line.
  */
 export const MODS: Mod[] = [
-  // Preload patches.
+  // Preload patches. The boot veil must mount before anything paints.
+  startupSkeleton,
   chromeless,
   cookieReject,
 

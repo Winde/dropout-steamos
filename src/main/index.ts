@@ -1,4 +1,12 @@
-import { app, BrowserWindow, ipcMain, net, session, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  net,
+  screen,
+  session,
+  shell,
+} from "electron";
 import type { IpcMainInvokeEvent } from "electron";
 import fs from "node:fs";
 import path from "node:path";
@@ -91,9 +99,18 @@ function openExternal(rawUrl: string): void {
 }
 
 function createWindow(): void {
+  // Start at the size the window will keep. Maximizing only after the first
+  // paint made the boot skeleton reflow from a 1600px-wide layout to the
+  // screen's width as it was shown. The work-area bounds give the same
+  // full-screen window without a resize after the renderer's first frame.
+  const fillScreen = !wantsFullscreen && !wantsWindowed;
+  const workArea = fillScreen ? screen.getPrimaryDisplay().workArea : null;
+
   win = new BrowserWindow({
-    width: 1600,
-    height: 900,
+    x: workArea?.x,
+    y: workArea?.y,
+    width: workArea?.width ?? 1600,
+    height: workArea?.height ?? 900,
     fullscreen: wantsFullscreen,
     frame: !wantsFullscreen,
     backgroundColor: "#0b0b0b",
@@ -111,7 +128,6 @@ function createWindow(): void {
 
   win.setMenuBarVisibility(false);
   win.once("ready-to-show", () => {
-    if (!wantsFullscreen && !wantsWindowed) win?.maximize();
     win?.show();
   });
 

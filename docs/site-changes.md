@@ -20,6 +20,41 @@ action/focus priority.
 | Edge-to-edge player | `src/tv/mods/watch-player.css` | `#watch-player`, `.embed`, `iframe` | The OSD overlays the player, so the player must own the viewport. The site's `max-height` rules are desktop limits and must be overridden. | The site provides a full-viewport watch layout. |
 | Header version line | `src/tv/mods/updates.css` | `.dropin-update` | Drop-In has no app menu. A two-line build stamp in the header's secondary actions shows the running version and opens the update dialog without overlaying content. | The site offers an app/settings menu. |
 
+## Startup
+
+### Boot veil
+
+**Files:** `src/tv/mods/startup-skeleton.ts`,
+`src/tv/mods/startup-skeleton.css`
+
+The site boots in visible pieces: the hero paints, React adds rows, the cookie
+banner is dismissed, and initial focus lands 800 ms later. On a TV that reads
+as a series of jumps. The first document of an app session is therefore
+covered by a shadow-DOM skeleton that copies the browse page's geometry: the
+header, an optional promo strip, row spacing, and 16:9, 2:3 or 1:1 cards.
+
+The veil is mounted as soon as `<body>` exists, so the site's own loading
+states happen behind it. The window opens at the display's work-area size
+instead of being maximized after the first paint, so that first frame is
+already at its final width. Its grid follows the browse page's own
+card breakpoints: four columns below 1920px, six at 1920px and up, with the
+percentage gaps that keep the cards the same size as the real ones. Only the
+promo strip's presence is read from the live page; the rest of the skeleton
+is fixed, so it never changes size while the rows load. It waits for the
+first screen to settle — two browse rows, the first row's images and the
+focus ring — then cross-fades out over 380 ms. A stalled page leaves the veil
+after 6 s (8 s on the player), so a skeleton can never cover the app forever.
+
+Only the first document is covered. In-app navigation opens new documents,
+and a skeleton on every click would feel heavier than the site's own progress.
+The marker is `sessionStorage["dropin:booted"]`, written when the veil has
+finished.
+
+- To undo: remove `startupSkeleton` from `src/tv/mods/index.ts`.
+- The skeleton stays out of the page's stylesheets on purpose (its `.row`,
+  `.card` and `.header` class names would collide with the site); its CSS is
+  embedded in the shadow root.
+
 ## Player and consent
 
 ### Chromeless player
@@ -178,6 +213,7 @@ not appear.
 | --- | --- | --- |
 | English UI | `src/main/locale.ts`, `src/main/index.ts` | Forces Chromium's `--lang=en-US`, sends `Accept-Language: en-US,en;q=0.9`, and pins both `locale=en` and `locale_det=en`. A stale `locale=pt` cookie from the on-site switcher otherwise keeps the storefront Portuguese. |
 | Window fullscreen | `src/main/index.ts` | The player's fullscreen button cannot be allowed: making the cross-origin iframe the fullscreen element hides the OSD. The request is denied and the window is fullscreened instead. |
+| Boot window size | `src/main/index.ts` | The window opens at the primary display's work-area size instead of maximizing after the first paint, so the boot skeleton (and the page) never reflow from the 1600 px default to the screen width. |
 | Select picker | `src/tv/mods/select-picker.ts`, `src/tv/picker.ts`, `src/tv/input.ts` | `<select>` is a button on TV: A opens a shadow-DOM picker, up/down moves the highlight, A confirms and B closes. Left/right are normal spatial navigation, so the Season and Sort controls reach each other. On confirm the picker sets `selectedIndex` and dispatches `change`, so the site's season/sort/language handlers still work. |
 | Player OSD | `src/tv/mods/player.ts`, `src/tv/osd.ts`, `src/tv/player.ts` | Shadow-DOM overlay with play, subtitles, mute, back. Auto-hides while playing, stays on pause. |
 
@@ -204,6 +240,8 @@ These selectors are observed on the live site and are the fragile part:
 - `.browse-item-card` — one D-pad stop per card (see `src/tv/mods/card-focus.ts`).
 - `.browse-row`, `.browse-left-arrow`, `.browse-right-arrow` — a row's cards and
   the arrows its edge press clicks (see `src/tv/mods/carousel-edge.ts`).
+- `.promo-banner` — the boot veil shows its yellow strip only when the live
+  page has one (see `src/tv/mods/startup-skeleton.ts`).
 - `.horizontal-row-header`, `.view-more-link` — row heading and its **View all**
   link; both are removed from focus, and View all is hidden (see
   `src/tv/mods/row-title-focus.ts` and `row-title-focus.css`).

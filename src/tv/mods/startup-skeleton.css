@@ -1,0 +1,364 @@
+/*
+ * Site change: boot veil.
+ * The first document of an app session is covered by a skeleton that copies
+ * the storefront's header and row geometry. The site's own loading states
+ * (hero, React rows, cookie banner, focus) happen behind it, then the veil
+ * cross-fades to the settled page. It lives in a shadow root, so the site's
+ * typography and layout rules cannot reach it.
+ *
+ * The measurements are the browse page's own: 65px header, 3.7% page gutter,
+ * 24px row padding, 26px row gap, 16:9 / 2:3 / 1:1 cards. The grid follows
+ * its two card breakpoints: four columns below 1920px, six at 1920px and up.
+ * The gaps are percentages tied to the same geometry, so a window resize
+ * reflows the skeleton exactly as it reflows the page.
+ */
+:host {
+  all: initial;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: block;
+  overflow: hidden;
+  background: #141414;
+  color-scheme: dark;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 380ms ease;
+}
+
+:host(.leaving) {
+  opacity: 0;
+}
+
+:host([data-kind="watch"]) {
+  background: #000;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: inherit;
+}
+
+/*
+ * Every placeholder uses the same bone: a dark block with a soft highlight
+ * sweeping across it. The sweep is cheap (one transform per block) and gives
+ * the veil motion without the page underneath contributing any.
+ */
+.sk {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #262626;
+}
+
+.sk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.055) 50%,
+    transparent 80%
+  );
+  animation: boot-shimmer 1.7s ease-in-out infinite;
+}
+
+@keyframes boot-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Header ------------------------------------------------------------- */
+
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 24px;
+  box-sizing: border-box;
+  height: 65px;
+  padding: 0 2.5vw;
+  overflow: hidden;
+  background: #030000;
+  border-bottom: 1px solid #2e2e2e;
+}
+
+.logo {
+  flex: none;
+  width: 112px;
+  height: 26px;
+  border-radius: 2px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.nav-item {
+  flex: none;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.action {
+  flex: none;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.action.stamp {
+  width: 84px;
+  height: 26px;
+}
+
+/* Optional marketing banner above the header ------------------------ */
+
+.promo {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 0;
+  overflow: hidden;
+  background: #feea3b;
+  transition: height 180ms ease;
+}
+
+/* Kept in the layout at height 0, so a banner that resolves late slides the
+ * veil down instead of dropping the header by 71px in one frame. */
+.page.has-promo .promo {
+  height: 71px;
+}
+
+.promo .sk {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.promo .sk::after {
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(0, 0, 0, 0.1) 50%,
+    transparent 80%
+  );
+}
+
+.promo-line {
+  height: 10px;
+  border-radius: 2px;
+}
+
+.promo-line.short {
+  height: 8px;
+}
+
+/* Catalog rows ------------------------------------------------------- */
+
+.rows {
+  padding: 0 3.7vw;
+}
+
+.row {
+  padding: 24px 0 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row-title {
+  width: 180px;
+  height: 24px;
+  margin-bottom: 23px;
+  border-radius: 4px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.53%;
+}
+
+.card {
+  min-width: 0;
+  padding-bottom: 16px;
+}
+
+.card:nth-child(n + 5) {
+  display: none;
+}
+
+/*
+ * The browse page shows four cards below 1920px and six at 1920px and up.
+ * The percentage gaps above are tied to the card width the site gives each
+ * breakpoint: ~23px at 1600, ~18px at 1920, ~24px at 2560.
+ */
+@media (min-width: 1920px) {
+  .rows {
+    padding: 0 3.48vw;
+  }
+
+  .cards {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1.01%;
+  }
+
+  .card:nth-child(n + 5) {
+    display: block;
+  }
+}
+
+.art {
+  aspect-ratio: 16 / 9;
+}
+
+.row[data-shape="portrait"] .art {
+  aspect-ratio: 2 / 3;
+}
+
+.row[data-shape="square"] .art {
+  aspect-ratio: 1 / 1;
+}
+
+.line {
+  width: 76%;
+  height: 15px;
+  margin-top: 12px;
+  border-radius: 2px;
+}
+
+/* Login -------------------------------------------------------------- */
+
+.page.login {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 4vh 4vw;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-sizing: border-box;
+  width: min(440px, 46vw);
+  padding: 38px;
+  background: #191919;
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
+}
+
+.panel-title {
+  width: 62%;
+  height: 24px;
+}
+
+.panel-sub {
+  width: 86%;
+  height: 12px;
+  margin-bottom: 10px;
+}
+
+.field {
+  height: 48px;
+  border-radius: 4px;
+}
+
+.button {
+  height: 44px;
+  margin-top: 6px;
+  border-radius: 4px;
+}
+
+/* Other pages -------------------------------------------------------- */
+
+.other-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 8vh var(--gutter, 3.7vw);
+}
+
+.other-title {
+  width: 30%;
+  height: 28px;
+  margin-bottom: 12px;
+}
+
+.other-line {
+  width: min(820px, 100%);
+  height: 18px;
+}
+
+.other-line.short {
+  width: min(490px, 60%);
+}
+
+/* Watch -------------------------------------------------------------- */
+
+.page.watch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(255, 255, 255, 0.16);
+  border-top-color: #feea3b;
+  border-radius: 50%;
+  animation: boot-spin 0.9s linear infinite;
+}
+
+@keyframes boot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Motion preferences ------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sk::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .spinner {
+    animation: none;
+    border-top-color: rgba(255, 255, 255, 0.16);
+    border-left-color: #feea3b;
+  }
+
+  :host {
+    transition-duration: 1ms;
+  }
+}

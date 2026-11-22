@@ -106,6 +106,11 @@ const mocks = vi.hoisted(() => {
 
   const shell = { openExternal: vi.fn() };
   const net = { fetch: vi.fn() };
+  const screen = {
+    getPrimaryDisplay: vi.fn(() => ({
+      workArea: { x: 0, y: 0, width: 1920, height: 1080 },
+    })),
+  };
 
   return {
     app,
@@ -115,6 +120,7 @@ const mocks = vi.hoisted(() => {
     ipcMain,
     net,
     pinEnglish: vi.fn(),
+    screen,
     session,
     shell,
     windows,
@@ -126,6 +132,7 @@ vi.mock("electron", () => ({
   BrowserWindow: mocks.BrowserWindow,
   ipcMain: mocks.ipcMain,
   net: mocks.net,
+  screen: mocks.screen,
   session: mocks.session,
   shell: mocks.shell,
 }));
@@ -225,8 +232,10 @@ describe("startup", () => {
 
     const window = win();
     expect(window.options).toMatchObject({
-      width: 1600,
-      height: 900,
+      x: 0,
+      y: 0,
+      width: 1920,
+      height: 1080,
       fullscreen: false,
       frame: true,
       backgroundColor: "#0b0b0b",
@@ -263,13 +272,13 @@ describe("startup", () => {
     expect(String(agent)).toMatch(/^Mozilla\/5\.0 \(X11; Linux x86_64\)/);
   });
 
-  it("shows the window and maximizes it by default", async () => {
+  it("shows the work-area-sized window without a late resize", async () => {
     await loadMain();
     const window = win();
 
     window.handlers.get("ready-to-show")?.();
 
-    expect(window.maximize).toHaveBeenCalledTimes(1);
+    expect(window.maximize).not.toHaveBeenCalled();
     expect(window.show).toHaveBeenCalledTimes(1);
   });
 

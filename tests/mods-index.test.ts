@@ -45,6 +45,7 @@ describe("mod registry", () => {
       "search-focus",
       "search-shortcut",
       "select-picker",
+      "startup-skeleton",
       "updates",
       "watch-frame-title",
       "watch-layout",
@@ -86,8 +87,15 @@ describe("mod registry", () => {
   });
 
   it("runs the preload patches before the DOM is parsed", () => {
+    expect(byId("startup-skeleton").early).toBeTypeOf("function");
     expect(byId("chromeless").early).toBeTypeOf("function");
     expect(byId("cookie-reject").early).toBeTypeOf("function");
+  });
+
+  it("keeps the boot skeleton's CSS inside its shadow root", () => {
+    // Its class names (.row, .card, .header) are generic. Injecting the file
+    // as a page stylesheet would let them collide with the storefront.
+    expect(byId("startup-skeleton").css).toBeUndefined();
   });
 
   it("gives every visual mod its stylesheet", () => {
@@ -157,5 +165,17 @@ describe("site CSS", () => {
     expect(css).toContain(".tooltip");
     expect(css).toContain('[data-testid="browse-tooltip"]');
     expect(css).toContain("display: none");
+  });
+
+  it("draws a boot skeleton that matches the storefront geometry", () => {
+    const css = shippedCss("startup-skeleton.css");
+    expect(css).toContain(":host");
+    expect(css).toContain("boot-shimmer");
+    expect(css).toContain("aspect-ratio: 16 / 9");
+    expect(css).toContain("aspect-ratio: 2 / 3");
+    expect(css).toContain("aspect-ratio: 1 / 1");
+    expect(css).toContain("grid-template-columns: repeat(4");
+    expect(css).toContain("grid-template-columns: repeat(6");
+    expect(css).toContain("@media (min-width: 1920px)");
   });
 });
